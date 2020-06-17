@@ -1,0 +1,34 @@
+{{#if details.result}}
+{{#each details.result as |result|}}
+{{#if result.domain}}
+  <span class="integration-summary-tag integration-background-color integration-border-color">
+    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+    <span class="integration-text-color">Domain: {{result.domain}}</span>
+  </span>
+{{/if}}
+{{#if result.ip.geo.country_name}}
+  <span class="integration-summary-tag integration-background-color integration-border-color">
+    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+    <span class="integration-text-color">Country: {{result.ip.geo.country_name}}</span>
+  </span>
+{{/if}}
+{{#if result.first_seen}}
+  <span class="integration-summary-tag integration-background-color integration-border-color">
+    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+    <span class="integration-text-color">First Seen: {{result.first_seen}} - Last Seen: {{result.last_seen}}</span>
+  </span>
+{{/if}}
+{{/each}}
+{{/if}}
+{{#if details.result.avscan_score}}
+  <span class="integration-summary-tag integration-background-color integration-border-color">
+    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+    <span class="integration-text-color">AV_Scan Score: {{details.result.avscan_score}}</span>
+  </span>
+{{/if}}
+{{#if details.result.scan_time}}
+  <span class="integration-summary-tag integration-background-color integration-border-color">
+    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+    <span class="integration-text-color"> Scan Time: {{details.result.scan_time}}</span>
+  </span>
+{{/if}}

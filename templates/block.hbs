@@ -1,0 +1,298 @@
+{{#if errorMessage}}
+    <div class="alert alert-danger error-container">
+        <div class="error-title">{{fa-icon "exclamation-circle"}} Error Loading Details </div>
+        {{errorMessage}}
+    </div>
+{{/if}}
+{{#if details.link}}
+    <div class="p-title">
+        <a class="p-link" href={{details.link}}>
+            View in Hyas
+            {{fa-icon "external-link-square" class="external-link-icon"}}
+        </a>
+    </div>
+{{/if}}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a {{action "changeTab" "passivedns"}} class="nav-link {{if (eq activeTab "passivedns") "active"}}" href="#">PassiveDns</a>
+    </li>
+    {{#if (eq block.entity.type "IPv4")}}
+        <li class="nav-item">
+            <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (or (eq activeTab "deviceGeo")(not activeTab)) "active"}}" href="#">
+                DeviceGeo 
+            </a>
+        </li>
+      {{/if}}
+      {{#if (eq block.entity.type "hash")}}
+        <li class="nav-item">
+            <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
+                Sample {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
+        </li>
+        {{/if}}
+        {{#if (eq block.entity.type "domain")}}
+        <li class="nav-item">
+            <a {{action "changeTab" "sslcert"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sslcert")(not activeTab)) "active"}}" href="#">
+                SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
+        </li>
+        {{/if}}
+</ul>
+
+{{#if (eq activeTab "passivedns")}}
+    {{#if details.result.length}}
+        <h1 class="p-title">
+            {{fa-icon "globe" fixedWidth=true}} 
+        </h1>
+        {{#each details.result as | result |}}
+            <div class="mb-2">
+                {{#if result.cert_name}}
+                    <div>
+                        <span class="p-key">Cert Name: </span>
+                        <span class="p-value">{{result.cert_name}}</span>
+                    </div>
+                {{/if}}
+                {{#if result.domain}}
+                    <div>
+                        <span class="p-key">Domain: </span>
+                        <span class="p-value">{{result.domain}}</span>
+                    </div>
+                {{/if}}
+                {{#if result.first_seen}}
+                    <div>
+                        <span class="p-key">First Seen: </span>
+                        <span class="p-value">{{result.first_seen}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.last_seen}}
+                    <div>
+                        <span class="p-key">Last Seen: </span>
+                        <span class="p-value">{{result.last_seen}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.country_name}}
+                    <div>
+                        <span class="p-key">Country Name: </span>
+                        <span class="p-value">{{result.ip.geo.country_name}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.city_name}}
+                    <div>
+                        <span class="p-key">City Name: </span>
+                        <span class="p-value">{{result.ip.geo.city_name}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.isp.autonomous_system_organization}}
+                    <div>
+                        <span class="p-key">City Name: </span>
+                        <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.isp.isp}}
+                    <div>
+                        <span class="p-key">ISP: </span>
+                        <span class="p-value">{{result.ip.geo.isp.isp}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.isp.organization}}
+                    <div>
+                        <span class="p-key">ISP Oganization: </span>
+                        <span class="p-value">{{result.ip.geo.isp.organization}} </span>
+                    </div>
+                {{/if}}
+            </div>
+        {{/each}}
+    {{else}}
+        <div class="alert alert-info mt-2" role="alert">
+            No PassiveDns Information Found
+        </div>
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "deviceGeo")}}
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Device Geo Location Details are Loading
+        </div>
+    {{else}}
+        {{#if details.deviceGeo.length}}
+            <h1 class="p-title">
+                {{fa-icon "bug" fixedWidth=true}}  Device Geo Details
+            </h1>
+            {{#each details.deviceGeo as | device |}}
+                <div class="mb-2">
+                    {{#if device.datetime}}
+                        <div>
+                            <span class="p-key">Date Seen: </span>
+                            <span class="p-value">{{device.datetime}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.device_primary_id}}
+                        <div>
+                            <span class="p-key">Device ID: </span>
+                            <span class="p-value">{{device.device_primary_id}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.device_user_agent}}
+                        <div>
+                            <span class="p-key">Device User Agent: </span>
+                            <span class="p-value">{{device.device_user_agent}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.geo_country_alpha_2}}
+                        <div>
+                            <span class="p-key">Device Country Code: </span>
+                            <span class="p-value">{{device.geo_country_alpha_2}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.geo_horizontal_accuracy}}
+                        <div>
+                            <span class="p-key">Device Horizontal Accuracy: </span>
+                            <span class="p-value">{{device.geo_horizontal_accuracy}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.latitude}}
+                        <div>
+                            <span class="p-key">Device Latitude: </span>
+                            <span class="p-value">{{device.latitude}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.longitude}}
+                        <div>
+                            <span class="p-key">Device Longitude: </span>
+                            <span class="p-value">{{device.longitude}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.wifi_ssid}}
+                        <div>
+                            <span class="p-key">Wifi SSID: </span>
+                            <span class="p-value">{{device.wifi_ssid}}</span>
+                        </div>
+                    {{/if}}
+                    
+                </div>
+            {{/each}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No Device Geo Details Found
+            </div>
+        {{/if}}
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "hash")}}
+    {{#if details.result.av_score}}
+        <h1 class="p-title">
+            {{fa-icon "brain" fixedWidth=true}} Sample Information Details
+        </h1>
+            <div class="mb-2">
+                {{#if details.result.av_score}}
+                    <div>
+                        <span class="p-key">AV Score: </span>
+                        <span class="p-value">{{details.result.av_score}}</span>
+                    </div>
+                {{/if}}
+                {{#if details.result.scan_time}}
+                    <div>
+                        <span class="p-key">AV Scan Time: </span>
+                        <span class="p-value">{{details.result.scan_time}}</span>
+                    </div>
+                {{/if}}
+                {{#if details.result.scan_results}}
+                {{#each details.result.scan_results as |scan|}}
+                    <div>
+                        <span class="p-key">Scan: </span>
+                        <span class="p-value">AV: {{scan.av_name}} - Threat: {{scan.threat_found}}</span>
+                    </div>
+                {{/each}}
+                {{/if}}
+            </div>
+    {{else}}
+        <div class="alert alert-info mt-2" role="alert">
+            No Sample Information Found
+        </div>
+    {{/if}}
+    
+{{/if}}
+
+{{#if (eq activeTab "sslcert")}}
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            SSL Certificate Information is Loading
+        </div>
+    {{else}}
+        {{#if details.domainSsl}}
+            <h1 class="p-title">
+                {{fa-icon "brain" fixedWidth=true}}  SSL Certificate Details
+            </h1>
+            <div class="mb-2">
+                {{#if details.domainSsl.ssl_certs}}
+                {{#each details.domainSsl.ssl_certs as | cert |}}
+                {{#if cert.ip}}
+                    <div>
+                        <span class="p-key">Cert IP: </span>
+                        <span class="p-value">{{cert.ip}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.cert_key}}
+                    <div>
+                        <span class="p-key">Cert Key: </span>
+                        <span class="p-value">{{cert.ssl_cert.cert_key}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.expire_date}}
+                    <div>
+                        <span class="p-key">Cert Expiration: </span>
+                        <span class="p-value">{{cert.ssl_cert.expire_date}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.issue_date}}
+                    <div>
+                        <span class="p-key">Cert Issue Date: </span>
+                        <span class="p-value">{{cert.ssl_cert.issue_date}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.issuer_commonName}}
+                    <div>
+                        <span class="p-key">Cert Issue Name: </span>
+                        <span class="p-value">{{cert.ssl_cert.issuer_commonName}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.issuer_countryName}}
+                    <div>
+                        <span class="p-key">Cert Issue Country: </span>
+                        <span class="p-value">{{cert.ssl_cert.issuer_countryName}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.issuer_organizationName}}
+                    <div>
+                        <span class="p-key">Cert Issue Org Name: </span>
+                        <span class="p-value">{{cert.ssl_cert.issuer_organizationName}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.subject_commonName}}
+                    <div>
+                        <span class="p-key">Cert Subject Common Name: </span>
+                        <span class="p-value">{{cert.ssl_cert.subject_commonName}}</span>
+                    </div>
+                {{/if}}
+                {{#if cert.ssl_cert.subject_organizationName}}
+                    <div>
+                        <span class="p-key">Cert Subject Org Name: </span>
+                        <span class="p-value">{{cert.ssl_cert.subject_organizationName}}</span>
+                    </div>
+                {{/if}}
+              {{/each}}
+              {{/if}}
+            </div>
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No SSl Certificate Information Found
+            </div>
+        {{/if}}
+    {{/if}}
+{{/if}}
+
+
+
