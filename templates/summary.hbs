@@ -1,21 +1,15 @@
 {{#if details.result}}
 {{#each details.result as |result|}}
-{{#if result.domain}}
+{{#if result.datetime}}
   <span class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">Domain: {{result.domain}}</span>
+    <span class="integration-text-color">Date Last Seen: {{result.datetime}}</span>
   </span>
 {{/if}}
-{{#if result.ip.geo.country_name}}
+{{#if result.device_user_agent}}
   <span class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">Country: {{result.ip.geo.country_name}}</span>
-  </span>
-{{/if}}
-{{#if result.first_seen}}
-  <span class="integration-summary-tag integration-background-color integration-border-color">
-    <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">First Seen: {{result.first_seen}} - Last Seen: {{result.last_seen}}</span>
+    <span class="integration-text-color">Device User Agent: {{result.device_user_agent}} - Last Seen: {{result.last_seen}}</span>
   </span>
 {{/if}}
 {{/each}}

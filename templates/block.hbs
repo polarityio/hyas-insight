@@ -15,12 +15,12 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a {{action "changeTab" "passivedns"}} class="nav-link {{if (eq activeTab "passivedns") "active"}}" href="#">PassiveDns</a>
+        <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
     </li>
     {{#if (eq block.entity.type "IPv4")}}
         <li class="nav-item">
-            <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (or (eq activeTab "deviceGeo")(not activeTab)) "active"}}" href="#">
-                DeviceGeo 
+            <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
+                PassiveDns 
             </a>
         </li>
       {{/if}}
@@ -41,11 +41,11 @@
 </ul>
 
 {{#if (eq activeTab "passivedns")}}
-    {{#if details.result.length}}
+    {{#if details.passivedns.length}}
         <h1 class="p-title">
             {{fa-icon "globe" fixedWidth=true}} 
         </h1>
-        {{#each details.result as | result |}}
+        {{#each details.passivedns as | result |}}
             <div class="mb-2">
                 {{#if result.cert_name}}
                     <div>
@@ -116,11 +116,11 @@
             Device Geo Location Details are Loading
         </div>
     {{else}}
-        {{#if details.deviceGeo.length}}
+        {{#if details.result.length}}
             <h1 class="p-title">
                 {{fa-icon "bug" fixedWidth=true}}  Device Geo Details
             </h1>
-            {{#each details.deviceGeo as | device |}}
+            {{#each details.result as | device |}}
                 <div class="mb-2">
                     {{#if device.datetime}}
                         <div>

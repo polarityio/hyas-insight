@@ -74,7 +74,7 @@ function doLookup(entities, options, cb) {
         //do the lookup
         let requestOptions = {
           json: true,
-          uri: url + '/passivedns',
+          uri: url + '/device_geo',
           method: 'POST',
           headers: {
             'X-API-Key': options.apiKey,
@@ -91,7 +91,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,2);
+            body = body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -227,11 +227,11 @@ function _setupRegexBlacklists(options) {
   }
 }
 
-function doDeviceGeoLookup(entity, options) {
+function doPassivednsLookup(entity, options) {
   return function (done) {
     if (entity.isIPv4) {
       let requestOptions = {
-        uri: url + '/device_geo',
+        uri: url + '/passivedns',
           method: 'POST',
           headers: {
             "X-API-Key": options.apiKey,
@@ -246,7 +246,7 @@ function doDeviceGeoLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body.splice(0,5);
+        body = body.splice(0,3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -293,15 +293,15 @@ function doDomainSSlLookup(entity, options) {
 function onDetails(lookupObject, options, cb) {
   async.parallel(
     {
-      deviceGeo: doDeviceGeoLookup(lookupObject.entity, options),
+      passivedns: doPassivednsLookup(lookupObject.entity, options),
       domainSsl: doDomainSSlLookup(lookupObject.entity, options)
     },
-    (err, { deviceGeo, domainSsl }) => {
+    (err, { passivedns, domainSsl }) => {
       if (err) {
         return cb(err);
       }
       //store the results into the details object so we can access them in our template
-      lookupObject.data.details.deviceGeo = deviceGeo;
+      lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
 
       Logger.trace({ lookup: lookupObject.data }, 'Looking at the data after on details.');
