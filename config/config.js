@@ -92,8 +92,8 @@ module.exports = {
       },
       {
         key: 'blacklist',
-        name: 'Blacklist Domains and IPs',
-        description: 'List of domains and IPs that you never want to send to PassiveTotal',
+        name: 'Block list Domains and IPs',
+        description: 'List of domains and IPs that you never want to send to Hyas',
         default: '',
         type: 'text',
         userCanEdit: false,
@@ -101,7 +101,7 @@ module.exports = {
       },
       {
         key: 'domainBlacklistRegex',
-        name: 'Domain Black List Regex',
+        name: 'Domain Block List Regex',
         description:
           'Domains that match the given regex will not be looked up (if blank, no domains will be black listed)',
         default: '',
@@ -111,7 +111,7 @@ module.exports = {
       },
       {
         key: 'ipBlacklistRegex',
-        name: 'IP Black List Regex',
+        name: 'IP Block List Regex',
         description: 'IPs that match the given regex will not be looked up (if blank, no IPs will be black listed)',
         default: '',
         type: 'text',

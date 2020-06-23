@@ -17,13 +17,11 @@
     <li class="nav-item">
         <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
     </li>
-    {{#if (eq block.entity.type "IPv4")}}
         <li class="nav-item">
             <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
                 PassiveDns 
             </a>
         </li>
-      {{/if}}
       {{#if (eq block.entity.type "hash")}}
         <li class="nav-item">
             <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
@@ -37,15 +35,20 @@
                 SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "whois"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whois")(not activeTab)) "active"}}" href="#">
+                WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
+        </li>
         {{/if}}
 </ul>
 
 {{#if (eq activeTab "passivedns")}}
-    {{#if details.passivedns.length}}
+    {{#if details.result.length}}
         <h1 class="p-title">
             {{fa-icon "globe" fixedWidth=true}} 
         </h1>
-        {{#each details.passivedns as | result |}}
+        {{#each details.result as | result |}}
             <div class="mb-2">
                 {{#if result.cert_name}}
                     <div>
@@ -214,6 +217,86 @@
         </div>
     {{/if}}
     
+{{/if}}
+
+{{#if (eq activeTab "whois")}}
+    {{#if details.domainWhois}}
+        <h1 class="p-title">
+            {{fa-icon "brain" fixedWidth=true}} Whois Information Details
+        </h1>
+            <div class="mb-2">
+            {{#each details.domainWhois as | who |}}
+                {{#if who.country}}
+                {{#each who.country as | country |}}
+                    <div>
+                        <span class="p-key">Country: </span>
+                        <span class="p-value">{{country}}</span>
+                    </div>
+                {{/each}}
+                {{/if}}
+
+                {{#if who.city}}
+                {{#each who.city as | city | }}
+                    <div>
+                        <span class="p-key">City: </span>
+                        <span class="p-value">{{city}}</span>
+                    </div>
+                {{/each}}
+                {{/if}}
+
+                {{#if who.domain}}
+       
+                    <div>
+                        <span class="p-key">Domain: </span>
+                        <span class="p-value">{{who.domain}}</span>
+                    </div>
+                {{/if}}
+
+                {{#if details.domain_2tld}}
+                    <div>
+                        <span class="p-key">Domain TLD : </span>
+                        <span class="p-value">{{who.domain_2tld}}</span>
+                    </div>
+                {{/if}}
+
+                {{#if details.domain_created_datetime}}
+                    <div>
+                        <span class="p-key">Domain Created On: </span>
+                        <span class="p-value">{{who.domain_created_datetime}}</span>
+                    </div>
+                {{/if}}
+
+                {{#if details.domain_expires_datetime}}
+                    <div>
+                        <span class="p-key">Domain Expires On: </span>
+                        <span class="p-value">{{who.domain_expires_datetime}}</span>
+                    </div>
+                {{/if}}
+
+                {{#if who.email}}
+                {{#each who.email as | email |}}
+                    <div>
+                        <span class="p-key">Emails Used: </span>
+                        <span class="p-value">{{email}}</span>
+                    </div>
+                {{/each}}
+                {{/if}}
+
+                {{#if who.nameserver}}
+                {{#each who.nameserver as | nameserver |}}
+                    <div>
+                        <span class="p-key">NameServers: </span>
+                        <span class="p-value">{{nameserver}}</span>
+                    </div>
+                {{/each}}
+                {{/if}}
+               {{/each}} 
+            </div>
+    {{else}}
+        <div class="alert alert-info mt-2" role="alert">
+            No WhoIs Information Found
+        </div>
+    {{/if}}
 {{/if}}
 
 {{#if (eq activeTab "sslcert")}}

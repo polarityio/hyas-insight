@@ -257,6 +257,35 @@ function doPassivednsLookup(entity, options) {
   };
 }
 
+function doDomainWhoisLookup(entity, options) {
+  return function (done) {
+    if (entity.isDomain) {
+      let requestOptions = {
+        uri: url + '/whois',
+          method: 'POST',
+          headers: {
+            "X-API-Key": options.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: {
+            "applied_filters": {
+              "domain": entity.value
+            }
+          },
+          json:true
+      };
+      
+      requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body.splice(0,3);
+        let processedResult = handleRestError(error, entity, response, body);
+        if (processedResult.error) return done(processedResult);
+        done(null, processedResult.body);
+      });
+    } else {
+      done(null, null);
+    }
+  };
+}
 
 function doDomainSSlLookup(entity, options) {
   return function (done) {
@@ -294,15 +323,17 @@ function onDetails(lookupObject, options, cb) {
   async.parallel(
     {
       passivedns: doPassivednsLookup(lookupObject.entity, options),
-      domainSsl: doDomainSSlLookup(lookupObject.entity, options)
+      domainSsl: doDomainSSlLookup(lookupObject.entity, options),
+      domainWhois: doDomainWhoisLookup(lookupObject.entity, options)
     },
-    (err, { passivedns, domainSsl }) => {
+    (err, { passivedns, domainSsl, domainWhois }) => {
       if (err) {
         return cb(err);
       }
       //store the results into the details object so we can access them in our template
       lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
+      lookupObject.data.details.domainWhois = domainWhois;
 
       Logger.trace({ lookup: lookupObject.data }, 'Looking at the data after on details.');
 
