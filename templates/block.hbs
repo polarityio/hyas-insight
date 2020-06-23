@@ -31,13 +31,13 @@
         {{/if}}
         {{#if (eq block.entity.type "domain")}}
         <li class="nav-item">
-            <a {{action "changeTab" "sslcert"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sslcert")(not activeTab)) "active"}}" href="#">
-                SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            <a {{action "changeTab" "whois"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whois")(not activeTab)) "active"}}" href="#">
+                WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
         <li class="nav-item">
-            <a {{action "changeTab" "whois"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whois")(not activeTab)) "active"}}" href="#">
-                WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            <a {{action "changeTab" "sslcert"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sslcert")(not activeTab)) "active"}}" href="#">
+                SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
         {{/if}}
