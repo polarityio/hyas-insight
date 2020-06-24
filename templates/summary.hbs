@@ -12,22 +12,22 @@
     <span class="integration-text-color">Device User Agent: {{result.device_user_agent}}</span>
   </span>
 {{/if}}
-{{#if result.cert_name}}
+{{#if result.registrar}}
  <span class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">Certificate Name: {{result.cert_name}}</span>
+    <span class="integration-text-color">Registrar: {{result.registrar}}</span>
   </span>
 {{/if}}
-{{#if result.ip.geo.country_name}}
+{{#if result.domain_created_datetime}}
  <span class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">Country: {{result.ip.geo.country_name}}</span>
+    <span class="integration-text-color">Domain Created: {{result.domain_created_datetime}}</span>
   </span>
 {{/if}}
-{{#if result.first_seen}}
+{{#if result.domain_updated_datetime}}
  <span class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
-    <span class="integration-text-color">First seen: {{result.first_seen}} - Last Seen: {{result.last_seen}}</span>
+    <span class="integration-text-color">Domain Last Updated: {{result.domain_updated_datetime}}</span>
   </span>
 {{/if}}
 {{/each}}

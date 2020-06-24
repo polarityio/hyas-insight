@@ -14,14 +14,14 @@
 {{/if}}
 
 <ul class="nav nav-tabs">
+    {{#if (eq block.entity.type "IPv4")}}
     <li class="nav-item">
         <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
     </li>
-        <li class="nav-item">
-            <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
-                PassiveDns 
-            </a>
-        </li>
+    <li class="nav-item">
+        <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (eq activeTab "ipDynamic") "active"}}" href="#">Dynamic DNS</a>
+    </li>
+    {{/if}}
       {{#if (eq block.entity.type "hash")}}
         <li class="nav-item">
             <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
@@ -36,6 +36,11 @@
             </a>
         </li>
         <li class="nav-item">
+            <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
+                PassiveDns 
+            </a>
+        </li>
+        <li class="nav-item">
             <a {{action "changeTab" "sslcert"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sslcert")(not activeTab)) "active"}}" href="#">
                 SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
@@ -44,11 +49,11 @@
 </ul>
 
 {{#if (eq activeTab "passivedns")}}
-    {{#if details.result.length}}
+    {{#if details.domainPassive.length}}
         <h1 class="p-title">
             {{fa-icon "globe" fixedWidth=true}} 
         </h1>
-        {{#each details.result as | result |}}
+        {{#each details.domainPassive as | result |}}
             <div class="mb-2">
                 {{#if result.cert_name}}
                     <div>
@@ -121,9 +126,80 @@
     {{else}}
         {{#if details.result.length}}
             <h1 class="p-title">
-                {{fa-icon "bug" fixedWidth=true}}  Device Geo Details
+                {{fa-icon "globe" fixedWidth=true}}  Device Geo Details
             </h1>
             {{#each details.result as | device |}}
+                <div class="mb-2">
+                    {{#if device.datetime}}
+                        <div>
+                            <span class="p-key">Date Seen: </span>
+                            <span class="p-value">{{device.datetime}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.device_primary_id}}
+                        <div>
+                            <span class="p-key">Device ID: </span>
+                            <span class="p-value">{{device.device_primary_id}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.device_user_agent}}
+                        <div>
+                            <span class="p-key">Device User Agent: </span>
+                            <span class="p-value">{{device.device_user_agent}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.geo_country_alpha_2}}
+                        <div>
+                            <span class="p-key">Device Country Code: </span>
+                            <span class="p-value">{{device.geo_country_alpha_2}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.geo_horizontal_accuracy}}
+                        <div>
+                            <span class="p-key">Device Horizontal Accuracy: </span>
+                            <span class="p-value">{{device.geo_horizontal_accuracy}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.latitude}}
+                        <div>
+                            <span class="p-key">Device Latitude: </span>
+                            <span class="p-value">{{device.latitude}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.longitude}}
+                        <div>
+                            <span class="p-key">Device Longitude: </span>
+                            <span class="p-value">{{device.longitude}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.wifi_ssid}}
+                        <div>
+                            <span class="p-key">Wifi SSID: </span>
+                            <span class="p-value">{{device.wifi_ssid}}</span>
+                        </div>
+                    {{/if}}
+                    
+                </div>
+            {{/each}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No Device Geo Details Found
+            </div>
+        {{/if}}
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "ipdynamic")}}
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Dynamic DNS Details are Loading
+        </div>
+    {{else}}
+        {{#if details.ipDynamic.length}}
+            <h1 class="p-title">
+                {{fa-icon "fast-forward" fixedWidth=true}}  Device Geo Details
+            </h1>
+            {{#each details.ipDynamic as | device |}}
                 <div class="mb-2">
                     {{#if device.datetime}}
                         <div>
@@ -220,12 +296,12 @@
 {{/if}}
 
 {{#if (eq activeTab "whois")}}
-    {{#if details.domainWhois}}
+    {{#if details.result.length}}
         <h1 class="p-title">
-            {{fa-icon "brain" fixedWidth=true}} Whois Information Details
+            {{fa-icon "question-circle" fixedWidth=true}} Whois Information Details
         </h1>
             <div class="mb-2">
-            {{#each details.domainWhois as | who |}}
+            {{#each details.result as | who |}}
                 {{#if who.country}}
                 {{#each who.country as | country |}}
                     <div>
@@ -252,21 +328,21 @@
                     </div>
                 {{/if}}
 
-                {{#if details.domain_2tld}}
+                {{#if who.domain_2tld}}
                     <div>
                         <span class="p-key">Domain TLD : </span>
                         <span class="p-value">{{who.domain_2tld}}</span>
                     </div>
                 {{/if}}
 
-                {{#if details.domain_created_datetime}}
+                {{#if who.domain_created_datetime}}
                     <div>
                         <span class="p-key">Domain Created On: </span>
                         <span class="p-value">{{who.domain_created_datetime}}</span>
                     </div>
                 {{/if}}
 
-                {{#if details.domain_expires_datetime}}
+                {{#if who.domain_expires_datetime}}
                     <div>
                         <span class="p-key">Domain Expires On: </span>
                         <span class="p-value">{{who.domain_expires_datetime}}</span>
@@ -290,8 +366,10 @@
                     </div>
                 {{/each}}
                 {{/if}}
+                 <hr>
                {{/each}} 
             </div>
+           
     {{else}}
         <div class="alert alert-info mt-2" role="alert">
             No WhoIs Information Found
@@ -305,9 +383,9 @@
             SSL Certificate Information is Loading
         </div>
     {{else}}
-        {{#if details.domainSsl}}
+        {{#if details.domainSsl.related.length}}
             <h1 class="p-title">
-                {{fa-icon "brain" fixedWidth=true}}  SSL Certificate Details
+                {{fa-icon "certificate" fixedWidth=true}}  SSL Certificate Details
             </h1>
             <div class="mb-2">
                 {{#if details.domainSsl.ssl_certs}}

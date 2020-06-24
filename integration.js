@@ -107,7 +107,7 @@ function doLookup(entities, options, cb) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
         let requestOptions = {
-          uri: url + '/passivedns',
+          uri: url + '/whois',
           method: 'POST',
           headers: {
             "X-API-Key": options.apiKey,
@@ -257,11 +257,11 @@ function doPassivednsLookup(entity, options) {
   };
 }
 
-function doDomainWhoisLookup(entity, options) {
+function doDomainPassiveLookup(entity, options) {
   return function (done) {
     if (entity.isDomain) {
       let requestOptions = {
-        uri: url + '/whois',
+        uri: url + '/passivedns',
           method: 'POST',
           headers: {
             "X-API-Key": options.apiKey,
@@ -317,23 +317,53 @@ function doDomainSSlLookup(entity, options) {
   };
 }
 
-
+function doDynamicDNSLookup(entity, options) {
+  return function (done) {
+    if (entity.isDomain) {
+      let requestOptions = {
+        uri: url + '/dynamicdns',
+          method: 'POST',
+          headers: {
+            "X-API-Key": options.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: {
+            "applied_filters": {
+              "ip": entity.value
+            }
+          },
+          json:true
+      };
+      
+      requestWithDefaults(requestOptions, (error, response, body) => {
+        //body = body.splice(0,5);
+        let processedResult = handleRestError(error, entity, response, body);
+        if (processedResult.error) return done(processedResult);
+        done(null, processedResult.body);
+      });
+    } else {
+      done(null, null);
+    }
+  };
+}
 
 function onDetails(lookupObject, options, cb) {
   async.parallel(
     {
       passivedns: doPassivednsLookup(lookupObject.entity, options),
       domainSsl: doDomainSSlLookup(lookupObject.entity, options),
-      domainWhois: doDomainWhoisLookup(lookupObject.entity, options)
+      domainPassive: doDomainPassiveLookup(lookupObject.entity, options),
+      ipDynamic: doDynamicDNSLookup(lookupObject.entity, options)
     },
-    (err, { passivedns, domainSsl, domainWhois }) => {
+    (err, { passivedns, domainSsl, domainPassive, ipDynamic }) => {
       if (err) {
         return cb(err);
       }
       //store the results into the details object so we can access them in our template
       lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
-      lookupObject.data.details.domainWhois = domainWhois;
+      lookupObject.data.details.domainPassive = domainPassive;
+      lookupObject.data.details.ipDynamic = ipDynamic;
 
       Logger.trace({ lookup: lookupObject.data }, 'Looking at the data after on details.');
 
