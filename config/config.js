@@ -24,7 +24,7 @@ module.exports = {
      */
     description:
       "Searches Hyas Insights for information on hashes, ips and domains",
-    entityTypes: ['IPv4', 'hash', 'domain'],
+    entityTypes: ['IPv4', 'IPv6', 'hash', 'domain', 'email'],
     /**
      * Provide custom component logic and template for rendering the integration details block.  If you do not
      * provide a custom template and/or component then the integration will display data as a table of key value

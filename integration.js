@@ -103,7 +103,41 @@ function doLookup(entities, options, cb) {
           });
         });
       }
-    } else if (entity.isDomain) {
+    } if (entity.isIPv6) {
+      if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
+        //do the lookup
+        let requestOptions = {
+          json: true,
+          uri: url + '/device_geo',
+          method: 'POST',
+          headers: {
+            'X-API-Key': options.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: { 
+            'applied_filters': {
+              'ipv6': entity.value
+            }
+          }
+        };
+
+        Logger.trace({ options: requestOptions }, 'Request URI');
+
+        tasks.push(function (done) {
+          requestWithDefaults(requestOptions, function (error, res, body) {
+            body = body.splice(0,3);
+            let processedResult = handleRestError(error, entity, res, body);
+
+            if (processedResult.error) {
+              done(processedResult);
+              return;
+            }
+
+            done(null, processedResult);
+          });
+        });
+      }
+    }else if (entity.isDomain) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
         let requestOptions = {
@@ -125,7 +159,40 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,2);
+            body = body.splice(0,3);
+            let processedResult = handleRestError(error, entity, res, body);
+            if (processedResult.error) {
+              done(processedResult);
+              return;
+            }
+
+            done(null, processedResult);
+          });
+        });
+      }
+    }else if (entity.isEmail) {
+      if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
+        //do the lookup
+        let requestOptions = {
+          uri: url + '/whois',
+          method: 'POST',
+          headers: {
+            "X-API-Key": options.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: {
+            "applied_filters": {
+              "email": entity.value
+            }
+          },
+          json: true 
+        };
+
+        Logger.trace({ options: requestOptions }, 'Request URI');
+
+        tasks.push(function (done) {
+          requestWithDefaults(requestOptions, function (error, res, body) {
+            body = body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
