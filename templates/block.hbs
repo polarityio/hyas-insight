@@ -319,14 +319,8 @@
                     {{/if}}
                     {{#if device.latitude}}
                         <div>
-                            <span class="p-key">Device Latitude: </span>
-                            <span class="p-value">{{device.latitude}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.longitude}}
-                        <div>
-                            <span class="p-key">Device Longitude: </span>
-                            <span class="p-value">{{device.longitude}}</span>
+                            <span class="p-key">Lat - Long: </span>
+                            <span class="p-value">{{device.latitude}}, {{device.longitude}}</span>
                         </div>
                     {{/if}}
                     {{#if device.wifi_ssid}}
