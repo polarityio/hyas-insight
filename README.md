@@ -1,13 +1,15 @@
-# Polarity Hyas Insights Integration
+# Polarity Hyas Insight Integration
 
 The Polarity - Hyas Insight integration queries Hyas for Domains, Ips and Hashes and returns information relating to DNS, Whois, SSL information and device geolocations. 
 
 | ![image](https://user-images.githubusercontent.com/22529325/84897397-835f2600-b073-11ea-80e1-a2d860fb0a92.png) |
 |---|
-|Hyas Insights Example|
+|Hyas Insight Example|
 
-## Hyas Insights API Key
-API Key needed to utilize Hyas Insights API. 
+## Hyas Insight Integration Options
+
+### Hyas Insight API Key
+API Key needed to utilize Hyas Insight API. 
 
 ### Domain and IP Blacklist
 

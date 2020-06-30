@@ -91,7 +91,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,3);
+            body = body && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -125,7 +125,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,3);
+            body = body && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -159,7 +159,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,3);
+            body = body && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -192,7 +192,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body.splice(0,3);
+            body = body && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -313,7 +313,7 @@ function doPassivednsLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body.splice(0,3);
+        body = body && body.splice(0,3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -343,7 +343,7 @@ function doDomainPassiveLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body.splice(0,3);
+        body = body && body.splice(0,3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -373,7 +373,6 @@ function doDomainSSlLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        //body = body.splice(0,5);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -403,7 +402,6 @@ function doDynamicDNSLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        //body = body.splice(0,5);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -427,6 +425,7 @@ function onDetails(lookupObject, options, cb) {
         return cb(err);
       }
       //store the results into the details object so we can access them in our template
+      // lookupObject.data.details = {};
       lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
       lookupObject.data.details.domainPassive = domainPassive;

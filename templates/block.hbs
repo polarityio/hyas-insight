@@ -15,30 +15,30 @@
 
 <ul class="nav nav-tabs">
     {{#if (eq block.entity.type "IPv4")}}
-    <li class="nav-item">
-        <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
-    </li>
-    <li class="nav-item">
-        <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (eq activeTab "ipDynamic") "active"}}" href="#">Dynamic DNS</a>
-    </li>
-    <li class="nav-item">
-        <a {{action "changeTab" "passivednsip"}} class="nav-link {{if (eq activeTab "passivednsip") "active"}}" href="#">Passive DNS</a>
-    </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
+        </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (eq activeTab "ipDynamic") "active"}}" href="#">Dynamic DNS</a>
+        </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "passivedns"}} class="nav-link {{if (eq activeTab "passivedns") "active"}}" href="#">Passive DNS</a>
+        </li>
     {{/if}}
     {{#if (eq block.entity.type "IPv6")}}
-    <li class="nav-item">
-        <a {{action "changeTab" "deviceGeov6"}} class="nav-link {{if (eq activeTab "deviceGeov6") "active"}}" href="#">Device Geo</a>
-    </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "deviceGeov6"}} class="nav-link {{if (eq activeTab "deviceGeov6") "active"}}" href="#">Device Geo</a>
+        </li>
     {{/if}}
 
-      {{#if (eq block.entity.type "hash")}}
+    {{#if (eq block.entity.type "hash")}}
         <li class="nav-item">
             <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
                 Sample {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
-        {{/if}}
-        {{#if (eq block.entity.type "domain")}}
+    {{/if}}
+    {{#if (eq block.entity.type "domain")}}
         <li class="nav-item">
             <a {{action "changeTab" "whois"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whois")(not activeTab)) "active"}}" href="#">
                 WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
@@ -46,7 +46,7 @@
         </li>
         <li class="nav-item">
             <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
-                PassiveDns 
+                Passive DNS 
             </a>
         </li>
         <li class="nav-item">
@@ -54,14 +54,14 @@
                 SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
-        {{/if}}
-        {{#if (eq block.entity.type "email")}}
+    {{/if}}
+    {{#if (eq block.entity.type "email")}}
         <li class="nav-item">
             <a {{action "changeTab" "whoisemail"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whoisemail")(not activeTab)) "active"}}" href="#">
                 WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
-        {{/if}}
+    {{/if}}
 </ul>
 
 {{#if (eq activeTab "passivedns")}}
