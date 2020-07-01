@@ -11,17 +11,17 @@ The Polarity - Hyas Insight integration queries Hyas for Domains, Ips and Hashes
 ### Hyas Insight API Key
 API Key needed to utilize Hyas Insight API. 
 
-### Domain and IP Blacklist
+### Domain and IP Blocklist
 
-This is an alternate option that can be used to specify domains or IPs that you do not want sent to UrlScan.  The data must specify the entire IP or domain to be blocked (e.g., www.google.com is treated differently than google.com).
+This is an alternate option that can be used to specify domains or IPs that you do not want sent to Hyas-Insights.  The data must specify the entire IP or domain to be blocked (e.g., www.google.com is treated differently than google.com).
 
-### Domain Blacklist Regex
+### Domain Blocklist Regex
 
-This option allows you to specify a regex to blacklist domains.  Any domain matching the regex will not be looked up.  If the regex is left blank then no domains will be blacklisted.
+This option allows you to specify a regex to blocklist domains.  Any domain matching the regex will not be looked up.  If the regex is left blank then no domains will be blacklisted.
 
-### IP Blacklist Regex
+### IP Blocklist Regex
 
-This option allows you to specify a regex to blacklist IPv4 Addresses.  Any IPv4 matching the regex will not be looked up.  If the regex is left blank then no IPv4s will be blacklisted.
+This option allows you to specify a regex to blocklist IPv4 Addresses.  Any IPv4 matching the regex will not be looked up.  If the regex is left blank then no IPv4s will be blacklisted.
 
 
 ## Installation Instructions
