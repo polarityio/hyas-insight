@@ -91,7 +91,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -125,7 +125,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -159,7 +159,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -192,7 +192,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0,3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -313,7 +313,7 @@ function doPassivednsLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && body.splice(0,3);
+        body = body && _.isArray(body) && body.splice(0,3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -343,7 +343,7 @@ function doDomainPassiveLookup(entity, options) {
       };
       
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && body.splice(0,3);
+        body = body && _.isArray(body) && body.splice(0,3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -451,7 +451,7 @@ function handleRestError(error, entity, res, body) {
     // we got data!
     result = {
       entity: entity,
-      body: body
+      body: body || null
     };
   } else if (res.statusCode === 404) {
     // no result found
