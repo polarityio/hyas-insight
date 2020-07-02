@@ -18,8 +18,8 @@ const MAX_DOMAIN_LABEL_LENGTH = 63;
 const MAX_ENTITY_LENGTH = 100;
 const MAX_PARALLEL_LOOKUPS = 10;
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
-const url = 'https://insight.hyas.com/api/ext'
-const uiurl = 'https://insight.hyas.com'
+const url = 'https://insight.hyas.com/api/ext';
+const uiurl = 'https://insight.hyas.com';
 /**
  *
  * @param entities
@@ -30,7 +30,10 @@ function startup(logger) {
   Logger = logger;
   let defaults = {};
 
-  if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
+  if (
+    typeof config.request.cert === 'string' &&
+    config.request.cert.length > 0
+  ) {
     defaults.cert = fs.readFileSync(config.request.cert);
   }
 
@@ -38,7 +41,10 @@ function startup(logger) {
     defaults.key = fs.readFileSync(config.request.key);
   }
 
-  if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
+  if (
+    typeof config.request.passphrase === 'string' &&
+    config.request.passphrase.length > 0
+  ) {
     defaults.passphrase = config.request.passphrase;
   }
 
@@ -46,7 +52,10 @@ function startup(logger) {
     defaults.ca = fs.readFileSync(config.request.ca);
   }
 
-  if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
+  if (
+    typeof config.request.proxy === 'string' &&
+    config.request.proxy.length > 0
+  ) {
     defaults.proxy = config.request.proxy;
   }
 
@@ -57,8 +66,6 @@ function startup(logger) {
   defaults.json = true;
   requestWithDefaults = request.defaults(defaults);
 }
-
-
 
 function doLookup(entities, options, cb) {
   let lookupResults = [];
@@ -80,9 +87,9 @@ function doLookup(entities, options, cb) {
             'X-API-Key': options.apiKey,
             'Content-Type': 'application/json'
           },
-          body: { 
-            'applied_filters': {
-              'ipv4': entity.value
+          body: {
+            applied_filters: {
+              ipv4: entity.value
             }
           }
         };
@@ -91,7 +98,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0, 3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -99,11 +106,15 @@ function doLookup(entities, options, cb) {
               return;
             }
 
-            done(null, processedResult);
+            done(null, {
+              ...processedResult,
+              link: `${uiurl}/static/details?ip=${entity.value}`
+            });
           });
         });
       }
-    } if (entity.isIPv6) {
+    }
+    if (entity.isIPv6) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
         let requestOptions = {
@@ -114,9 +125,9 @@ function doLookup(entities, options, cb) {
             'X-API-Key': options.apiKey,
             'Content-Type': 'application/json'
           },
-          body: { 
-            'applied_filters': {
-              'ipv6': entity.value
+          body: {
+            applied_filters: {
+              ipv6: entity.value
             }
           }
         };
@@ -125,7 +136,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0, 3);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -133,106 +144,128 @@ function doLookup(entities, options, cb) {
               return;
             }
 
-            done(null, processedResult);
+            done(null, {
+              ...processedResult,
+              link: `${uiurl}/static/details?ip=${entity.value}`
+            });
           });
         });
       }
-    }else if (entity.isDomain) {
+    } else if (entity.isDomain) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
         let requestOptions = {
           uri: url + '/whois',
           method: 'POST',
           headers: {
-            "X-API-Key": options.apiKey,
+            'X-API-Key': options.apiKey,
             'Content-Type': 'application/json'
           },
           body: {
-            "applied_filters": {
-              "domain": entity.value
+            applied_filters: {
+              domain: entity.value
             }
           },
-          json: true 
+          json: true
         };
 
         Logger.trace({ options: requestOptions }, 'Request URI');
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0, 3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
               return;
             }
 
-            done(null, processedResult);
+            done(null, {
+              ...processedResult,
+              link: `${uiurl}/static/details?domain=${entity.value}`
+            });
           });
         });
       }
-    }else if (entity.isEmail) {
+    } else if (entity.isEmail) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
         let requestOptions = {
           uri: url + '/whois',
           method: 'POST',
           headers: {
-            "X-API-Key": options.apiKey,
+            'X-API-Key': options.apiKey,
             'Content-Type': 'application/json'
           },
           body: {
-            "applied_filters": {
-              "email": entity.value
+            applied_filters: {
+              email: entity.value
             }
           },
-          json: true 
+          json: true
         };
 
         Logger.trace({ options: requestOptions }, 'Request URI');
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0,3);
+            body = body && _.isArray(body) && body.splice(0, 3);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
               return;
             }
 
-            done(null, processedResult);
+            done(null, {
+              ...processedResult,
+              link: `${uiurl}/static/details?email=${entity.value}`
+            });
           });
         });
       }
-    }else if (entity.isHash) {
-        //do the lookup
-        let requestOptions = {
-          uri: url + '/sample/information',
-          method: 'POST',
-          headers: {
-            "X-API-Key": options.apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: {
-            "applied_filters": {
-              "hash": entity.value
-            }
-          },
-          json:true 
-        };
+    } else if (entity.isHash) {
+      //do the lookup
+      let requestOptions = {
+        uri: url + '/sample/information',
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            hash: entity.value
+          }
+        },
+        json: true
+      };
 
-        Logger.trace({ options: requestOptions }, 'Request URI');
+      Logger.trace({ options: requestOptions }, 'Request URI');
 
-        tasks.push(function (done) {
-          requestWithDefaults(requestOptions, function (error, res, body) {
-            let processedResult = handleRestError(error, entity, res, body);
-            if (processedResult.error) {
-              done(processedResult);
-              return;
-            }
+      tasks.push(function (done) {
+        requestWithDefaults(requestOptions, function (error, res, body) {
+          let processedResult = handleRestError(error, entity, res, body);
+          if (processedResult.error) {
+            done(processedResult);
+            return;
+          }
 
-            done(null, processedResult);
+          done(null, {
+            ...processedResult,
+            link: `${uiurl}/static/details?${
+              entity.isMD5
+                ? 'md5'
+                : entity.isSHA1
+                ? 'sha1'
+                : entity.isSHA256
+                ? 'sha256'
+                : entity.isSHA512
+                ? 'sha512'
+                : 'q'
+            }=${entity.value}`
           });
         });
+      });
     }
   });
 
@@ -244,7 +277,11 @@ function doLookup(entities, options, cb) {
     }
 
     results.forEach((result) => {
-      if (result.body === null || _isMiss(result.body) ||_.isEmpty(result.body)) {
+      if (
+        result.body === null ||
+        _isMiss(result.body) ||
+        _.isEmpty(result.body)
+      ) {
         lookupResults.push({
           entity: result.entity,
           data: null
@@ -256,9 +293,9 @@ function doLookup(entities, options, cb) {
             summary: [],
             details: {
               result: result.body,
-              link: uiurl
-            }
-          }
+              link: result.link
+            },
+          },
         });
       }
     });
@@ -267,28 +304,39 @@ function doLookup(entities, options, cb) {
   });
 }
 
-
 function _setupRegexBlacklists(options) {
-  if (options.domainBlacklistRegex !== previousDomainRegexAsString && options.domainBlacklistRegex.length === 0) {
+  if (
+    options.domainBlacklistRegex !== previousDomainRegexAsString &&
+    options.domainBlacklistRegex.length === 0
+  ) {
     Logger.debug('Removing Domain Blacklist Regex Filtering');
     previousDomainRegexAsString = '';
     domainBlacklistRegex = null;
   } else {
     if (options.domainBlacklistRegex !== previousDomainRegexAsString) {
       previousDomainRegexAsString = options.domainBlacklistRegex;
-      Logger.debug({ domainBlacklistRegex: previousDomainRegexAsString }, 'Modifying Domain Blacklist Regex');
+      Logger.debug(
+        { domainBlacklistRegex: previousDomainRegexAsString },
+        'Modifying Domain Blacklist Regex'
+      );
       domainBlacklistRegex = new RegExp(options.domainBlacklistRegex, 'i');
     }
   }
 
-  if (options.ipBlacklistRegex !== previousIpRegexAsString && options.ipBlacklistRegex.length === 0) {
+  if (
+    options.ipBlacklistRegex !== previousIpRegexAsString &&
+    options.ipBlacklistRegex.length === 0
+  ) {
     Logger.debug('Removing IP Blacklist Regex Filtering');
     previousIpRegexAsString = '';
     ipBlacklistRegex = null;
   } else {
     if (options.ipBlacklistRegex !== previousIpRegexAsString) {
       previousIpRegexAsString = options.ipBlacklistRegex;
-      Logger.debug({ ipBlacklistRegex: previousIpRegexAsString }, 'Modifying IP Blacklist Regex');
+      Logger.debug(
+        { ipBlacklistRegex: previousIpRegexAsString },
+        'Modifying IP Blacklist Regex'
+      );
       ipBlacklistRegex = new RegExp(options.ipBlacklistRegex, 'i');
     }
   }
@@ -299,21 +347,21 @@ function doPassivednsLookup(entity, options) {
     if (entity.isIPv4) {
       let requestOptions = {
         uri: url + '/passivedns',
-          method: 'POST',
-          headers: {
-            "X-API-Key": options.apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: {
-            "applied_filters": {
-              "ipv4": entity.value
-            }
-          },
-          json:true
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            ipv4: entity.value
+          }
+        },
+        json: true,
       };
-      
+
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0,3);
+        body = body && _.isArray(body) && body.splice(0, 3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -329,21 +377,21 @@ function doDomainPassiveLookup(entity, options) {
     if (entity.isDomain) {
       let requestOptions = {
         uri: url + '/passivedns',
-          method: 'POST',
-          headers: {
-            "X-API-Key": options.apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: {
-            "applied_filters": {
-              "domain": entity.value
-            }
-          },
-          json:true
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            domain: entity.value
+          }
+        },
+        json: true
       };
-      
+
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0,3);
+        body = body && _.isArray(body) && body.splice(0, 3);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -359,19 +407,19 @@ function doDomainSSlLookup(entity, options) {
     if (entity.isDomain) {
       let requestOptions = {
         uri: url + '/ssl_certificate',
-          method: 'POST',
-          headers: {
-            "X-API-Key": options.apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: {
-            "applied_filters": {
-              "domain": entity.value
-            }
-          },
-          json:true
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            domain: entity.value
+          }
+        },
+        json: true
       };
-      
+
       requestWithDefaults(requestOptions, (error, response, body) => {
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
@@ -388,19 +436,19 @@ function doDynamicDNSLookup(entity, options) {
     if (entity.isDomain) {
       let requestOptions = {
         uri: url + '/dynamicdns',
-          method: 'POST',
-          headers: {
-            "X-API-Key": options.apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: {
-            "applied_filters": {
-              "ip": entity.value
-            }
-          },
-          json:true
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            ip: entity.value
+          }
+        },
+        json: true
       };
-      
+
       requestWithDefaults(requestOptions, (error, response, body) => {
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
@@ -418,7 +466,7 @@ function onDetails(lookupObject, options, cb) {
       passivedns: doPassivednsLookup(lookupObject.entity, options),
       domainSsl: doDomainSSlLookup(lookupObject.entity, options),
       domainPassive: doDomainPassiveLookup(lookupObject.entity, options),
-      ipDynamic: doDynamicDNSLookup(lookupObject.entity, options)
+      ipDynamic: doDynamicDNSLookup(lookupObject.entity, options),
     },
     (err, { passivedns, domainSsl, domainPassive, ipDynamic }) => {
       if (err) {
@@ -431,7 +479,10 @@ function onDetails(lookupObject, options, cb) {
       lookupObject.data.details.domainPassive = domainPassive;
       lookupObject.data.details.ipDynamic = ipDynamic;
 
-      Logger.trace({ lookup: lookupObject.data }, 'Looking at the data after on details.');
+      Logger.trace(
+        { lookup: lookupObject.data },
+        'Looking at the data after on details.'
+      );
 
       cb(null, lookupObject.data);
     }
@@ -502,7 +553,10 @@ function _isInvalidEntity(entity) {
 function _isEntityBlacklisted(entity, options) {
   const blacklist = options.blacklist;
 
-  Logger.trace({ blacklist: blacklist }, 'checking to see what blacklist looks like');
+  Logger.trace(
+    { blacklist: blacklist },
+    'checking to see what blacklist looks like'
+  );
 
   if (_.includes(blacklist, entity.value.toLowerCase())) {
     return true;
@@ -520,7 +574,10 @@ function _isEntityBlacklisted(entity, options) {
   if (entity.isDomain) {
     if (domainBlacklistRegex !== null) {
       if (domainBlacklistRegex.test(entity.value)) {
-        Logger.debug({ domain: entity.value }, 'Blocked BlackListed Domain Lookup');
+        Logger.debug(
+          { domain: entity.value },
+          'Blocked BlackListed Domain Lookup'
+        );
         return true;
       }
     }
@@ -539,11 +596,12 @@ function validateOptions(userOptions, cb) {
   let errors = [];
   if (
     typeof userOptions.apiKey.value !== 'string' ||
-    (typeof userOptions.apiKey.value === 'string' && userOptions.apiKey.value.length === 0)
+    (typeof userOptions.apiKey.value === 'string' &&
+      userOptions.apiKey.value.length === 0)
   ) {
     errors.push({
       key: 'apiKey',
-      message: 'You must provide a PassiveTotal API key'
+      message: 'You must provide a PassiveTotal API key',
     });
   }
   cb(null, errors);
