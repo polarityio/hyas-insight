@@ -187,6 +187,42 @@ function doLookup(entities, options, cb) {
           });
         });
       }
+    }else if (entity.type === 'custom') {
+      if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
+        //do the lookup
+        let requestOptions = {
+          uri: url + '/whois',
+          method: 'POST',
+          headers: {
+            'X-API-Key': options.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: {
+            applied_filters: {
+              phone: entity.value
+            }
+          },
+          json: true
+        };
+
+        Logger.trace({ options: requestOptions }, 'Request URI');
+
+        tasks.push(function (done) {
+          requestWithDefaults(requestOptions, function (error, res, body) {
+            body = body && _.isArray(body) && body.splice(0, 3);
+            let processedResult = handleRestError(error, entity, res, body);
+            if (processedResult.error) {
+              done(processedResult);
+              return;
+            }
+
+            done(null, {
+              ...processedResult,
+              link: `${uiurl}/static/details?phone=${entity.value}`
+            });
+          });
+        });
+      }
     } else if (entity.isEmail) {
       if (!_isInvalidEntity(entity) && !_isEntityBlacklisted(entity, options)) {
         //do the lookup
@@ -223,7 +259,7 @@ function doLookup(entities, options, cb) {
           });
         });
       }
-    } else if (entity.isHash) {
+    } else if (entity.isMD5 || entity.isSHA256) {
       //do the lookup
       let requestOptions = {
         uri: url + '/sample/information',
@@ -255,12 +291,8 @@ function doLookup(entities, options, cb) {
             link: `${uiurl}/static/details?${
               entity.isMD5
                 ? 'md5'
-                : entity.isSHA1
-                ? 'sha1'
                 : entity.isSHA256
                 ? 'sha256'
-                : entity.isSHA512
-                ? 'sha512'
                 : 'q'
             }=${entity.value}`
           });
@@ -402,6 +434,66 @@ function doDomainPassiveLookup(entity, options) {
   };
 }
 
+function doIpSampleLookup(entity, options) {
+  return function (done) {
+    if (entity.isIPv4) {
+      let requestOptions = {
+        uri: url + '/sample',
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            ipv4: entity.value
+          }
+        },
+        json: true
+      };
+
+      requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body && _.isArray(body) && body.splice(0, 3);
+        let processedResult = handleRestError(error, entity, response, body);
+        if (processedResult.error) return done(processedResult);
+        done(null, processedResult.body);
+      });
+    } else {
+      done(null, null);
+    }
+  };
+}
+
+function doDomainSampleLookup(entity, options) {
+  return function (done) {
+    if (entity.isDomain) {
+      let requestOptions = {
+        uri: url + '/sample',
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            domain: entity.value
+          }
+        },
+        json: true
+      };
+
+      requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body && _.isArray(body) && body.splice(0, 3);
+        let processedResult = handleRestError(error, entity, response, body);
+        if (processedResult.error) return done(processedResult);
+        done(null, processedResult.body);
+      });
+    } else {
+      done(null, null);
+    }
+  };
+}
+
 function doDomainSSlLookup(entity, options) {
   return function (done) {
     if (entity.isDomain) {
@@ -467,8 +559,11 @@ function onDetails(lookupObject, options, cb) {
       domainSsl: doDomainSSlLookup(lookupObject.entity, options),
       domainPassive: doDomainPassiveLookup(lookupObject.entity, options),
       ipDynamic: doDynamicDNSLookup(lookupObject.entity, options),
+      ipSample: doIpSampleLookup(lookupObject.entity, options),
+      domainSample: doDomainSampleLookup(lookupObject.entity, options)
+
     },
-    (err, { passivedns, domainSsl, domainPassive, ipDynamic }) => {
+    (err, { passivedns, domainSsl, domainPassive, ipDynamic, ipSample, domainSample  }) => {
       if (err) {
         return cb(err);
       }
@@ -478,6 +573,8 @@ function onDetails(lookupObject, options, cb) {
       lookupObject.data.details.domainSsl = domainSsl;
       lookupObject.data.details.domainPassive = domainPassive;
       lookupObject.data.details.ipDynamic = ipDynamic;
+      lookupObject.data.details.ipSample = ipSample;
+      lookupObject.data.details.domainSample = domainSample;
 
       Logger.trace(
         { lookup: lookupObject.data },

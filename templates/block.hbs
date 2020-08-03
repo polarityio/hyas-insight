@@ -22,7 +22,10 @@
             <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (eq activeTab "ipDynamic") "active"}}" href="#">Dynamic DNS</a>
         </li>
         <li class="nav-item">
-            <a {{action "changeTab" "passivedns"}} class="nav-link {{if (eq activeTab "passivedns") "active"}}" href="#">Passive DNS</a>
+            <a {{action "changeTab" "passivednsip"}} class="nav-link {{if (eq activeTab "ippassivednsip") "active"}}" href="#">Passive DNS</a>
+        </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "ipsample"}} class="nav-link {{if (eq activeTab "ipsample") "active"}}" href="#">Associated Hashes</a>
         </li>
     {{/if}}
     {{#if (eq block.entity.type "IPv6")}}
@@ -31,7 +34,8 @@
         </li>
     {{/if}}
 
-    {{#if (eq block.entity.type "hash")}}
+
+    {{#if (eq block.entity.type "md5")}}
         <li class="nav-item">
             <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
                 Sample {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
@@ -52,6 +56,11 @@
         <li class="nav-item">
             <a {{action "changeTab" "sslcert"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sslcert")(not activeTab)) "active"}}" href="#">
                 SSL Certificate {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "domainsample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "domainsample")(not activeTab)) "active"}}" href="#">
+                Associated Hash Information {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
     {{/if}}
@@ -410,8 +419,8 @@
     {{/if}}
 {{/if}}
 
-{{#if (eq activeTab "hash")}}
-    {{#if details.result.av_score}}
+{{#if (eq activeTab "sample")}}
+    {{#if details.result.scan_results}}
         <h1 class="p-title">
             {{fa-icon "brain" fixedWidth=true}} Sample Information Details
         </h1>
@@ -434,6 +443,7 @@
                         <span class="p-key">Scan: </span>
                         <span class="p-value">AV: {{scan.av_name}} - Threat: {{scan.threat_found}}</span>
                     </div>
+                    <hr>
                 {{/each}}
                 {{/if}}
             </div>
@@ -606,6 +616,110 @@
         <div class="alert alert-info mt-2" role="alert">
             No WhoIs Information Found
         </div>
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "ipsample")}}
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Associated Hash Details are Loading
+        </div>
+    {{else}}
+        {{#if details.ipSample.length}}
+            <h1 class="p-title">
+                {{fa-icon "globe" fixedWidth=true}}  Associated Hash Details
+            </h1>
+            {{#each details.ipSample as | device |}}
+                <div class="mb-2">
+                    {{#if device.datetime}}
+                        <div>
+                            <span class="p-key">Date Seen: </span>
+                            <span class="p-value">{{device.datetime}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.domain}}
+                        <div>
+                            <span class="p-key">domain: </span>
+                            <span class="p-value">{{device.domain}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.md5}}
+                        <div>
+                            <span class="p-key">MD5: </span>
+                            <span class="p-value">{{device.md5}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.sha1}}
+                        <div>
+                            <span class="p-key">SHA1: </span>
+                            <span class="p-value">{{device.sha1}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.sha256}}
+                        <div>
+                            <span class="p-key">SHA256: </span>
+                            <span class="p-value">{{device.sha256}}</span>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No Associated Hash Details Found
+            </div>
+        {{/if}}
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "domainsample")}}
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Associated Hash Details are Loading
+        </div>
+    {{else}}
+        {{#if details.domainSample.length}}
+            <h1 class="p-title">
+                {{fa-icon "globe" fixedWidth=true}}  Associated Hash Details
+            </h1>
+            {{#each details.domainSample as | device |}}
+                <div class="mb-2">
+                    {{#if device.datetime}}
+                        <div>
+                            <span class="p-key">Date Seen: </span>
+                            <span class="p-value">{{device.datetime}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.domain}}
+                        <div>
+                            <span class="p-key">domain: </span>
+                            <span class="p-value">{{device.domain}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.md5}}
+                        <div>
+                            <span class="p-key">MD5: </span>
+                            <span class="p-value">{{device.md5}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.sha1}}
+                        <div>
+                            <span class="p-key">SHA1: </span>
+                            <span class="p-value">{{device.sha1}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if device.sha256}}
+                        <div>
+                            <span class="p-key">SHA256: </span>
+                            <span class="p-value">{{device.sha256}}</span>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No Associated Hash Details Found
+            </div>
+        {{/if}}
     {{/if}}
 {{/if}}
 
