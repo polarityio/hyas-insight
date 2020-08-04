@@ -2,6 +2,7 @@
 
 const request = require('request');
 const _ = require('lodash');
+const fp = require('lodash/fp');
 const moment = require('moment');
 const config = require('./config/config');
 const async = require('async');
@@ -319,12 +320,16 @@ function doLookup(entities, options, cb) {
           data: null
         });
       } else {
+        const resultWithFormatedPhoneNumber = getResultWithFormatedPhoneNumber(
+          result
+        );
+
         lookupResults.push({
           entity: result.entity,
           data: {
             summary: [],
             details: {
-              result: result.body,
+              result: resultWithFormatedPhoneNumber,
               link: result.link
             },
           },
@@ -336,6 +341,22 @@ function doLookup(entities, options, cb) {
   });
 }
 
+const getResultWithFormatedPhoneNumber = fp.flow(
+  fp.getOr([], "body"),
+  fp.map((detail) => ({
+    ...detail,
+    ...(detail.phone &&
+      detail.phone.length && {
+        phone: fp.map(
+          ({ phone }) => ({
+            link: `${uiurl}/static/details?phone=%2B${phone.slice(1)}`,
+            number: phone,
+          }),
+          detail.phone
+        ),
+      }),
+  }))
+);
 function _setupRegexBlacklists(options) {
   if (
     options.domainBlacklistRegex !== previousDomainRegexAsString &&

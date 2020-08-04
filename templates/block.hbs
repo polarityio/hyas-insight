@@ -481,7 +481,6 @@
                 {{/if}}
 
                 {{#if who.domain}}
-       
                     <div>
                         <span class="p-key">Domain: </span>
                         <span class="p-value">{{who.domain}}</span>
@@ -518,6 +517,19 @@
                 {{/each}}
                 {{/if}}
 
+                {{#if who.phone}}
+                    {{#each who.phone as | phone |}}
+                        <div>
+                            <span class="p-key">Phone: </span>
+                            <span class="p-value">
+                                <a class="p-link" href={{phone.link}}>
+                                    {{phone.number}}
+                                </a>
+                            </span>
+                        </div>
+                    {{/each}}
+                {{/if}}
+
                 {{#if who.nameserver}}
                 {{#each who.nameserver as | nameserver |}}
                     <div>
@@ -526,10 +538,9 @@
                     </div>
                 {{/each}}
                 {{/if}}
-                 <hr>
+                <hr>
                {{/each}} 
             </div>
-           
     {{else}}
         <div class="alert alert-info mt-2" role="alert">
             No WhoIs Information Found
@@ -563,7 +574,6 @@
                 {{/if}}
 
                 {{#if who.domain}}
-       
                     <div>
                         <span class="p-key">Domain: </span>
                         <span class="p-value">{{who.domain}}</span>
@@ -598,6 +608,19 @@
                         <span class="p-value">{{email}}</span>
                     </div>
                 {{/each}}
+                {{/if}}
+
+                {{#if who.phone}}
+                    {{#each who.phone as | phone |}}
+                        <div>
+                            <span class="p-key">Phone: </span>
+                            <span class="p-value">
+                                <a class="p-link" href={{phone.link}}>
+                                    {{phone.number}}
+                                </a>
+                            </span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.nameserver}}
