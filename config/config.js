@@ -5,7 +5,7 @@ module.exports = {
      * @type String
      * @required
      */
-    name: 'HYAS Insights',
+    name: 'HYAS Insight',
     /**
      * The acronym that appears in the notification window when information from this integration
      * is displayed.  Note that the acronym is included as part of each "tag" in the summary information
@@ -23,8 +23,8 @@ module.exports = {
      * @optional
      */
     description:
-      "Searches Hyas Insights for information on hashes, ips and domains",
-    entityTypes: ['IPv4', 'IPv6', 'hash', 'domain', 'email'],
+      "Searches Hyas Insight for information on hashes, ips and domains",
+    entityTypes: ['IPv4', 'IPv6', 'MD5', 'domain', 'email'],
     /**
      * Provide custom component logic and template for rendering the integration details block.  If you do not
      * provide a custom template and/or component then the integration will display data as a table of key value
@@ -70,7 +70,7 @@ module.exports = {
       rejectUnauthorized: true
     },
     logging: {
-      level: 'trace' //trace, debug, info, warn, error, fatal
+      level: 'info' //trace, debug, info, warn, error, fatal
     },
     onDemandOnly: true,
     /**
