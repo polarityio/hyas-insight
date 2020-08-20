@@ -13,7 +13,7 @@ API Key needed to utilize Hyas Insight API.
 
 ### Domain and IP Blocklist
 
-This is an alternate option that can be used to specify domains or IPs that you do not want sent to Hyas-Insights.  The data must specify the entire IP or domain to be blocked (e.g., www.google.com is treated differently than google.com).
+This is an alternate option that can be used to specify domains or IPs that you do not want sent to Hyas Insight.  The data must specify the entire IP or domain to be blocked (e.g., www.google.com is treated differently than google.com).
 
 ### Domain Blocklist Regex
 

@@ -1,7 +1,7 @@
 {
   "main": "./integration.js",
-  "name": "hyas-insights",
-  "version": "3.1.0-beta",
+  "name": "hyas-insight",
+  "version": "3.1.1-beta",
   "private": true,
   "dependencies": {
     "request": "^2.88.2",
