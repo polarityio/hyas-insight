@@ -16,16 +16,24 @@
 <ul class="nav nav-tabs">
     {{#if (eq block.entity.type "IPv4")}}
         <li class="nav-item">
-            <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if (eq activeTab "deviceGeo") "active"}}" href="#">Device Geo</a>
+            <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "deviceGeo")(not activeTab)) "active"}}" href="#">
+                Device Geo
+            </a>
         </li>
         <li class="nav-item">
-            <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (eq activeTab "ipDynamic") "active"}}" href="#">Dynamic DNS</a>
+            <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (or (eq activeTab "ipdynamic")(not activeTab)) "active"}}" href="#">
+                Dynamic DNS {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
         </li>
         <li class="nav-item">
-            <a {{action "changeTab" "passivednsip"}} class="nav-link {{if (eq activeTab "ippassivednsip") "active"}}" href="#">Passive DNS</a>
+            <a {{action "changeTab" "passivednsip"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "passivednsip")(not activeTab)) "active"}}" href="#">
+                Passive DNS {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
         </li>
         <li class="nav-item">
-            <a {{action "changeTab" "ipsample"}} class="nav-link {{if (eq activeTab "ipsample") "active"}}" href="#">Associated Hashes</a>
+            <a {{action "changeTab" "ipsample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "ipsample")(not activeTab)) "active"}}" href="#">
+                Associated Hashes {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
         </li>
     {{/if}}
     {{#if (eq block.entity.type "IPv6")}}
@@ -45,12 +53,12 @@
     {{#if (eq block.entity.type "domain")}}
         <li class="nav-item">
             <a {{action "changeTab" "whois"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whois")(not activeTab)) "active"}}" href="#">
-                WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+                WhoIs
             </a>
         </li>
         <li class="nav-item">
             <a {{action "changeTab" "passivedns"}} class="nav-link {{if (or (eq activeTab "passivedns")(not activeTab)) "active"}}" href="#">
-                Passive DNS 
+                Passive DNS {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
         <li class="nav-item">
@@ -74,213 +82,243 @@
 </ul>
 
 {{#if (eq activeTab "passivedns")}}
-    {{#if details.domainPassive.length}}
-        <h1 class="p-title">
-            {{fa-icon "globe" fixedWidth=true}} 
-        </h1>
-        {{#each details.domainPassive as | result |}}
-            <div class="mb-2">
-                {{#if result.cert_name}}
-                    <div>
-                        <span class="p-key">Cert Name: </span>
-                        <span class="p-value">{{result.cert_name}}</span>
-                    </div>
-                {{/if}}
-                {{#if result.domain}}
-                    <div>
-                        <span class="p-key">Domain: </span>
-                        <span class="p-value">{{result.domain}}</span>
-                    </div>
-                {{/if}}
-                {{#if result.first_seen}}
-                    <div>
-                        <span class="p-key">First Seen: </span>
-                        <span class="p-value">{{result.first_seen}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.last_seen}}
-                    <div>
-                        <span class="p-key">Last Seen: </span>
-                        <span class="p-value">{{result.last_seen}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.country_name}}
-                    <div>
-                        <span class="p-key">Country Name: </span>
-                        <span class="p-value">{{result.ip.geo.country_name}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.city_name}}
-                    <div>
-                        <span class="p-key">City Name: </span>
-                        <span class="p-value">{{result.ip.geo.city_name}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.autonomous_system_organization}}
-                    <div>
-                        <span class="p-key">City Name: </span>
-                        <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.isp}}
-                    <div>
-                        <span class="p-key">ISP: </span>
-                        <span class="p-value">{{result.ip.geo.isp.isp}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.organization}}
-                    <div>
-                        <span class="p-key">ISP Oganization: </span>
-                        <span class="p-value">{{result.ip.geo.isp.organization}} </span>
-                    </div>
-                {{/if}}
-            </div>
-        {{/each}}
-    {{else}}
-        <div class="alert alert-info mt-2" role="alert">
-            No PassiveDns Information Found
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Passive DNS Details are Loading
         </div>
+    {{else}}
+        {{#if details.domainPassive.length}}
+            <h1 class="p-title">
+                {{fa-icon "globe" fixedWidth=true}} Passive DNS Details
+            </h1>
+            {{#each details.domainPassive as | result |}}
+                <div class="mb-2">
+                    {{#if result.cert_name}}
+                        <div>
+                            <span class="p-key">Cert Name: </span>
+                            <span class="p-value">{{result.cert_name}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if result.domain}}
+                        <div>
+                            <span class="p-key">Domain: </span>
+                            <span class="p-value">{{result.domain}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if result.first_seen}}
+                        <div>
+                            <span class="p-key">First Seen: </span>
+                            <span class="p-value">{{result.first_seen}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.last_seen}}
+                        <div>
+                            <span class="p-key">Last Seen: </span>
+                            <span class="p-value">{{result.last_seen}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.country_name}}
+                        <div>
+                            <span class="p-key">Country Name: </span>
+                            <span class="p-value">{{result.ip.geo.country_name}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.city_name}}
+                        <div>
+                            <span class="p-key">City Name: </span>
+                            <span class="p-value">{{result.ip.geo.city_name}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.autonomous_system_organization}}
+                        <div>
+                            <span class="p-key">City Name: </span>
+                            <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.isp}}
+                        <div>
+                            <span class="p-key">ISP: </span>
+                            <span class="p-value">{{result.ip.geo.isp.isp}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.organization}}
+                        <div>
+                            <span class="p-key">ISP Oganization: </span>
+                            <span class="p-value">{{result.ip.geo.isp.organization}} </span>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+            {{#if (and (eq details.pageSize details.domainPassive.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No PassiveDns Information Found
+            </div>
+        {{/if}}
     {{/if}}
 {{/if}}
 
 {{#if (eq activeTab "passivednsip")}}
-    {{#if details.passivedns.length}}
-        <h1 class="p-title">
-            {{fa-icon "globe" fixedWidth=true}} 
-        </h1>
-        {{#each details.passivedns as | result |}}
-            <div class="mb-2">
-                {{#if result.cert_name}}
-                    <div>
-                        <span class="p-key">Cert Name: </span>
-                        <span class="p-value">{{result.cert_name}}</span>
-                    </div>
-                {{/if}}
-                {{#if result.domain}}
-                    <div>
-                        <span class="p-key">Domain: </span>
-                        <span class="p-value">{{result.domain}}</span>
-                    </div>
-                {{/if}}
-                {{#if result.first_seen}}
-                    <div>
-                        <span class="p-key">First Seen: </span>
-                        <span class="p-value">{{result.first_seen}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.last_seen}}
-                    <div>
-                        <span class="p-key">Last Seen: </span>
-                        <span class="p-value">{{result.last_seen}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.country_name}}
-                    <div>
-                        <span class="p-key">Country Name: </span>
-                        <span class="p-value">{{result.ip.geo.country_name}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.city_name}}
-                    <div>
-                        <span class="p-key">City Name: </span>
-                        <span class="p-value">{{result.ip.geo.city_name}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.autonomous_system_organization}}
-                    <div>
-                        <span class="p-key">City Name: </span>
-                        <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.isp}}
-                    <div>
-                        <span class="p-key">ISP: </span>
-                        <span class="p-value">{{result.ip.geo.isp.isp}} </span>
-                    </div>
-                {{/if}}
-                {{#if result.ip.geo.isp.organization}}
-                    <div>
-                        <span class="p-key">ISP Oganization: </span>
-                        <span class="p-value">{{result.ip.geo.isp.organization}} </span>
-                    </div>
-                {{/if}}
-            </div>
-        {{/each}}
-    {{else}}
-        <div class="alert alert-info mt-2" role="alert">
-            No PassiveDns Information Found
+    {{#if block.isLoadingDetails}}
+        <div class="alert alert-info" role="alert">
+            Passive DNS Details are Loading
         </div>
+    {{else}}
+        {{#if details.passivedns.length}}
+            <h1 class="p-title">
+                {{fa-icon "globe" fixedWidth=true}} Passive DNS Details
+            </h1>
+            {{#each details.passivedns as | result |}}
+                <div class="mb-2">
+                    {{#if result.cert_name}}
+                        <div>
+                            <span class="p-key">Cert Name: </span>
+                            <span class="p-value">{{result.cert_name}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if result.domain}}
+                        <div>
+                            <span class="p-key">Domain: </span>
+                            <span class="p-value">{{result.domain}}</span>
+                        </div>
+                    {{/if}}
+                    {{#if result.first_seen}}
+                        <div>
+                            <span class="p-key">First Seen: </span>
+                            <span class="p-value">{{result.first_seen}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.last_seen}}
+                        <div>
+                            <span class="p-key">Last Seen: </span>
+                            <span class="p-value">{{result.last_seen}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.country_name}}
+                        <div>
+                            <span class="p-key">Country Name: </span>
+                            <span class="p-value">{{result.ip.geo.country_name}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.city_name}}
+                        <div>
+                            <span class="p-key">City Name: </span>
+                            <span class="p-value">{{result.ip.geo.city_name}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.autonomous_system_organization}}
+                        <div>
+                            <span class="p-key">City Name: </span>
+                            <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.isp}}
+                        <div>
+                            <span class="p-key">ISP: </span>
+                            <span class="p-value">{{result.ip.geo.isp.isp}} </span>
+                        </div>
+                    {{/if}}
+                    {{#if result.ip.geo.isp.organization}}
+                        <div>
+                            <span class="p-key">ISP Oganization: </span>
+                            <span class="p-value">{{result.ip.geo.isp.organization}} </span>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/each}}
+            {{#if (and (eq details.pageSize details.passivedns.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
+        {{else}}
+            <div class="alert alert-info mt-2" role="alert">
+                No PassiveDns Information Found
+            </div>
+        {{/if}}
     {{/if}}
 {{/if}}
 
 {{#if (eq activeTab "deviceGeo")}}
-    {{#if block.isLoadingDetails}}
-        <div class="alert alert-info" role="alert">
-            Device Geo Location Details are Loading
-        </div>
-    {{else}}
-        {{#if details.result.length}}
-            <h1 class="p-title">
-                {{fa-icon "globe" fixedWidth=true}}  Device Geo Details
-            </h1>
-            {{#each details.result as | device |}}
-                <div class="mb-2">
-                    {{#if device.datetime}}
-                        <div>
-                            <span class="p-key">Date Seen: </span>
-                            <span class="p-value">{{device.datetime}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.device_primary_id}}
-                        <div>
-                            <span class="p-key">Device ID: </span>
-                            <span class="p-value">{{device.device_primary_id}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.device_user_agent}}
-                        <div>
-                            <span class="p-key">Device User Agent: </span>
-                            <span class="p-value">{{device.device_user_agent}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.geo_country_alpha_2}}
-                        <div>
-                            <span class="p-key">Device Country Code: </span>
-                            <span class="p-value">{{device.geo_country_alpha_2}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.geo_horizontal_accuracy}}
-                        <div>
-                            <span class="p-key">Device Horizontal Accuracy: </span>
-                            <span class="p-value">{{device.geo_horizontal_accuracy}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.latitude}}
-                        <div>
-                            <span class="p-key">Device Latitude: </span>
-                            <span class="p-value">{{device.latitude}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.longitude}}
-                        <div>
-                            <span class="p-key">Device Longitude: </span>
-                            <span class="p-value">{{device.longitude}}</span>
-                        </div>
-                    {{/if}}
-                    {{#if device.wifi_ssid}}
-                        <div>
-                            <span class="p-key">Wifi SSID: </span>
-                            <span class="p-value">{{device.wifi_ssid}}</span>
-                        </div>
-                    {{/if}}
-                    
-                </div>
-            {{/each}}
-        {{else}}
-            <div class="alert alert-info mt-2" role="alert">
-                No Device Geo Details Found
+    {{#if details.result.length}}
+        <h1 class="p-title">
+            {{fa-icon "globe" fixedWidth=true}}  Device Geo Details
+        </h1>
+        {{#each details.result as | device |}}
+            <div class="mb-2">
+                {{#if device.datetime}}
+                    <div>
+                        <span class="p-key">Date Seen: </span>
+                        <span class="p-value">{{device.datetime}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.device_primary_id}}
+                    <div>
+                        <span class="p-key">Device ID: </span>
+                        <span class="p-value">{{device.device_primary_id}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.device_user_agent}}
+                    <div>
+                        <span class="p-key">Device User Agent: </span>
+                        <span class="p-value">{{device.device_user_agent}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.geo_country_alpha_2}}
+                    <div>
+                        <span class="p-key">Device Country Code: </span>
+                        <span class="p-value">{{device.geo_country_alpha_2}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.geo_horizontal_accuracy}}
+                    <div>
+                        <span class="p-key">Device Horizontal Accuracy: </span>
+                        <span class="p-value">{{device.geo_horizontal_accuracy}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.latitude}}
+                    <div>
+                        <span class="p-key">Device Latitude: </span>
+                        <span class="p-value">{{device.latitude}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.longitude}}
+                    <div>
+                        <span class="p-key">Device Longitude: </span>
+                        <span class="p-value">{{device.longitude}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.wifi_ssid}}
+                    <div>
+                        <span class="p-key">Wifi SSID: </span>
+                        <span class="p-value">{{device.wifi_ssid}}</span>
+                    </div>
+                {{/if}}
+                
+            </div>
+        {{/each}}
+        {{#if (and (eq details.pageSize details.result.length) details.link)}}
+            <div class="p-title">
+                <a class="p-link" href={{details.link}}>
+                    ... Find more in Hyas
+                    {{fa-icon "external-link-square" class="external-link-icon"}}
+                </a>
             </div>
         {{/if}}
+    {{else}}
+        <div class="alert alert-info mt-2" role="alert">
+            No Device Geo Details Found
+        </div>
     {{/if}}
 {{/if}}
 
@@ -341,6 +379,14 @@
                     
                 </div>
             {{/each}}
+            {{#if (and (eq details.pageSize details.result.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
                 No Device Geo Details Found
@@ -411,6 +457,14 @@
                     {{/if}}
                 </div>
             {{/each}}
+            {{#if (and (eq details.pageSize details.ipDynamic.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
                 No Dynamic DNS Information Found
@@ -437,14 +491,22 @@
                         <span class="p-value">{{details.result.scan_time}}</span>
                     </div>
                 {{/if}}
-                {{#if details.result.scan_results}}
-                {{#each details.result.scan_results as |scan|}}
-                    <div>
-                        <span class="p-key">Scan: </span>
-                        <span class="p-value">AV: {{scan.av_name}} - Threat: {{scan.threat_found}}</span>
-                    </div>
-                    <hr>
-                {{/each}}
+                {{#if details.result.scan_results.length}}
+                    {{#each details.result.scan_results as |scan|}}
+                        <div>
+                            <span class="p-key">Scan: </span>
+                            <span class="p-value">AV: {{scan.av_name}} - Threat: {{scan.threat_found}}</span>
+                        </div>
+                        <hr>
+                    {{/each}}
+                    {{#if (and (eq details.pageSize details.result.scan_results.length) details.link)}}
+                        <div class="p-title">
+                            <a class="p-link" href={{details.link}}>
+                                ... Find more in Hyas
+                                {{fa-icon "external-link-square" class="external-link-icon"}}
+                            </a>
+                        </div>
+                    {{/if}}
                 {{/if}}
             </div>
     {{else}}
@@ -463,21 +525,21 @@
             <div class="mb-2">
             {{#each details.result as | who |}}
                 {{#if who.country}}
-                {{#each who.country as | country |}}
-                    <div>
-                        <span class="p-key">Country: </span>
-                        <span class="p-value">{{country}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.country as | country |}}
+                        <div>
+                            <span class="p-key">Country: </span>
+                            <span class="p-value">{{country}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.city}}
-                {{#each who.city as | city | }}
-                    <div>
-                        <span class="p-key">City: </span>
-                        <span class="p-value">{{city}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.city as | city | }}
+                        <div>
+                            <span class="p-key">City: </span>
+                            <span class="p-value">{{city}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.domain}}
@@ -509,12 +571,12 @@
                 {{/if}}
 
                 {{#if who.email}}
-                {{#each who.email as | email |}}
-                    <div>
-                        <span class="p-key">Emails Used: </span>
-                        <span class="p-value">{{email}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.email as | email |}}
+                        <div>
+                            <span class="p-key">Emails Used: </span>
+                            <span class="p-value">{{email}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.phone}}
@@ -531,16 +593,24 @@
                 {{/if}}
 
                 {{#if who.nameserver}}
-                {{#each who.nameserver as | nameserver |}}
-                    <div>
-                        <span class="p-key">NameServers: </span>
-                        <span class="p-value">{{nameserver}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.nameserver as | nameserver |}}
+                        <div>
+                            <span class="p-key">NameServers: </span>
+                            <span class="p-value">{{nameserver}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
                 <hr>
-               {{/each}} 
-            </div>
+            {{/each}} 
+            {{#if (and (eq details.pageSize details.result.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
+        </div>
     {{else}}
         <div class="alert alert-info mt-2" role="alert">
             No WhoIs Information Found
@@ -556,21 +626,21 @@
             <div class="mb-2">
             {{#each details.result as | who |}}
                 {{#if who.country}}
-                {{#each who.country as | country |}}
-                    <div>
-                        <span class="p-key">Country: </span>
-                        <span class="p-value">{{country}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.country as | country |}}
+                        <div>
+                            <span class="p-key">Country: </span>
+                            <span class="p-value">{{country}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.city}}
-                {{#each who.city as | city | }}
-                    <div>
-                        <span class="p-key">City: </span>
-                        <span class="p-value">{{city}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.city as | city | }}
+                        <div>
+                            <span class="p-key">City: </span>
+                            <span class="p-value">{{city}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
 
                 {{#if who.domain}}
@@ -624,17 +694,24 @@
                 {{/if}}
 
                 {{#if who.nameserver}}
-                {{#each who.nameserver as | nameserver |}}
-                    <div>
-                        <span class="p-key">NameServers: </span>
-                        <span class="p-value">{{nameserver}}</span>
-                    </div>
-                {{/each}}
+                    {{#each who.nameserver as | nameserver |}}
+                        <div>
+                            <span class="p-key">NameServers: </span>
+                            <span class="p-value">{{nameserver}}</span>
+                        </div>
+                    {{/each}}
                 {{/if}}
-                 <hr>
-               {{/each}} 
-            </div>
-           
+                <hr>
+            {{/each}} 
+            {{#if (and (eq details.pageSize details.result.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
+        </div>
     {{else}}
         <div class="alert alert-info mt-2" role="alert">
             No WhoIs Information Found
@@ -686,6 +763,14 @@
                     {{/if}}
                 </div>
             {{/each}}
+            {{#if (and (eq details.pageSize details.ipSample.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
                 No Associated Hash Details Found
@@ -738,6 +823,14 @@
                     {{/if}}
                 </div>
             {{/each}}
+            {{#if (and (eq details.pageSize details.domainSample.length) details.link)}}
+                <div class="p-title">
+                    <a class="p-link" href={{details.link}}>
+                        ... Find more in Hyas
+                        {{fa-icon "external-link-square" class="external-link-icon"}}
+                    </a>
+                </div>
+            {{/if}}
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
                 No Associated Hash Details Found
@@ -757,64 +850,72 @@
                 {{fa-icon "certificate" fixedWidth=true}}  SSL Certificate Details
             </h1>
             <div class="mb-2">
-                {{#if details.domainSsl.ssl_certs}}
-                {{#each details.domainSsl.ssl_certs as | cert |}}
-                {{#if cert.ip}}
-                    <div>
-                        <span class="p-key">Cert IP: </span>
-                        <span class="p-value">{{cert.ip}}</span>
-                    </div>
+                {{#if details.domainSsl.ssl_certs.length}}
+                    {{#each details.domainSsl.ssl_certs as | cert |}}
+                        {{#if cert.ip}}
+                            <div>
+                                <span class="p-key">Cert IP: </span>
+                                <span class="p-value">{{cert.ip}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.cert_key}}
+                            <div>
+                                <span class="p-key">Cert Key: </span>
+                                <span class="p-value">{{cert.ssl_cert.cert_key}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.expire_date}}
+                            <div>
+                                <span class="p-key">Cert Expiration: </span>
+                                <span class="p-value">{{cert.ssl_cert.expire_date}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.issue_date}}
+                            <div>
+                                <span class="p-key">Cert Issue Date: </span>
+                                <span class="p-value">{{cert.ssl_cert.issue_date}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.issuer_commonName}}
+                            <div>
+                                <span class="p-key">Cert Issue Name: </span>
+                                <span class="p-value">{{cert.ssl_cert.issuer_commonName}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.issuer_countryName}}
+                            <div>
+                                <span class="p-key">Cert Issue Country: </span>
+                                <span class="p-value">{{cert.ssl_cert.issuer_countryName}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.issuer_organizationName}}
+                            <div>
+                                <span class="p-key">Cert Issue Org Name: </span>
+                                <span class="p-value">{{cert.ssl_cert.issuer_organizationName}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.subject_commonName}}
+                            <div>
+                                <span class="p-key">Cert Subject Common Name: </span>
+                                <span class="p-value">{{cert.ssl_cert.subject_commonName}}</span>
+                            </div>
+                        {{/if}}
+                        {{#if cert.ssl_cert.subject_organizationName}}
+                            <div>
+                                <span class="p-key">Cert Subject Org Name: </span>
+                                <span class="p-value">{{cert.ssl_cert.subject_organizationName}}</span>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                    {{#if (and (eq details.pageSize details.domainSsl.ssl_certs.length) details.link)}}
+                        <div class="p-title">
+                            <a class="p-link" href={{details.link}}>
+                                ... Find more in Hyas
+                                {{fa-icon "external-link-square" class="external-link-icon"}}
+                            </a>
+                        </div>
+                    {{/if}}
                 {{/if}}
-                {{#if cert.ssl_cert.cert_key}}
-                    <div>
-                        <span class="p-key">Cert Key: </span>
-                        <span class="p-value">{{cert.ssl_cert.cert_key}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.expire_date}}
-                    <div>
-                        <span class="p-key">Cert Expiration: </span>
-                        <span class="p-value">{{cert.ssl_cert.expire_date}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.issue_date}}
-                    <div>
-                        <span class="p-key">Cert Issue Date: </span>
-                        <span class="p-value">{{cert.ssl_cert.issue_date}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.issuer_commonName}}
-                    <div>
-                        <span class="p-key">Cert Issue Name: </span>
-                        <span class="p-value">{{cert.ssl_cert.issuer_commonName}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.issuer_countryName}}
-                    <div>
-                        <span class="p-key">Cert Issue Country: </span>
-                        <span class="p-value">{{cert.ssl_cert.issuer_countryName}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.issuer_organizationName}}
-                    <div>
-                        <span class="p-key">Cert Issue Org Name: </span>
-                        <span class="p-value">{{cert.ssl_cert.issuer_organizationName}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.subject_commonName}}
-                    <div>
-                        <span class="p-key">Cert Subject Common Name: </span>
-                        <span class="p-value">{{cert.ssl_cert.subject_commonName}}</span>
-                    </div>
-                {{/if}}
-                {{#if cert.ssl_cert.subject_organizationName}}
-                    <div>
-                        <span class="p-key">Cert Subject Org Name: </span>
-                        <span class="p-value">{{cert.ssl_cert.subject_organizationName}}</span>
-                    </div>
-                {{/if}}
-              {{/each}}
-              {{/if}}
             </div>
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
