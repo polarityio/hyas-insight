@@ -18,6 +18,7 @@ let ipBlacklistRegex = null;
 const MAX_DOMAIN_LABEL_LENGTH = 63;
 const MAX_ENTITY_LENGTH = 100;
 const MAX_PARALLEL_LOOKUPS = 10;
+const PAGE_SIZE = 5;
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
 const url = 'https://insight.hyas.com/api/ext';
 const uiurl = 'https://insight.hyas.com';
@@ -99,7 +100,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, 3);
+            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -137,7 +138,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, 3);
+            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -174,7 +175,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, 3);
+            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -210,7 +211,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, 3);
+            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -246,7 +247,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, 3);
+            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -330,7 +331,8 @@ function doLookup(entities, options, cb) {
             summary: [],
             details: {
               result: resultWithFormatedPhoneNumber,
-              link: result.link
+              link: result.link,
+              pageSize: PAGE_SIZE
             },
           },
         });
@@ -357,6 +359,7 @@ const getResultWithFormatedPhoneNumber = fp.flow(
       }),
   }))
 );
+
 function _setupRegexBlacklists(options) {
   if (
     options.domainBlacklistRegex !== previousDomainRegexAsString &&
@@ -414,7 +417,7 @@ function doPassivednsLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, 3);
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -444,7 +447,7 @@ function doDomainPassiveLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, 3);
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -474,7 +477,7 @@ function doIpSampleLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, 3);
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -504,7 +507,7 @@ function doDomainSampleLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, 3);
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -534,6 +537,7 @@ function doDomainSSlLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -546,7 +550,7 @@ function doDomainSSlLookup(entity, options) {
 
 function doDynamicDNSLookup(entity, options) {
   return function (done) {
-    if (entity.isDomain) {
+    if (entity.isIPv4) {
       let requestOptions = {
         uri: url + '/dynamicdns',
         method: 'POST',
@@ -563,6 +567,7 @@ function doDynamicDNSLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -582,14 +587,14 @@ function onDetails(lookupObject, options, cb) {
       ipDynamic: doDynamicDNSLookup(lookupObject.entity, options),
       ipSample: doIpSampleLookup(lookupObject.entity, options),
       domainSample: doDomainSampleLookup(lookupObject.entity, options)
-
     },
     (err, { passivedns, domainSsl, domainPassive, ipDynamic, ipSample, domainSample  }) => {
       if (err) {
+        Logger.error(err, "Error in On Details")
         return cb(err);
       }
       //store the results into the details object so we can access them in our template
-      // lookupObject.data.details = {};
+      lookupObject.data.details = lookupObject.data.details || {};
       lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
       lookupObject.data.details.domainPassive = domainPassive;
