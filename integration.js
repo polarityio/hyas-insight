@@ -588,11 +588,20 @@ function onDetails(lookupObject, options, cb) {
       ipSample: doIpSampleLookup(lookupObject.entity, options),
       domainSample: doDomainSampleLookup(lookupObject.entity, options)
     },
-    (err, { passivedns, domainSsl, domainPassive, ipDynamic, ipSample, domainSample  }) => {
+    (err, results) => {
       if (err) {
         Logger.error(err, "Error in On Details")
         return cb(err);
       }
+      const {
+        passivedns,
+        domainSsl,
+        domainPassive,
+        ipDynamic,
+        ipSample,
+        domainSample
+      } = results;
+      
       //store the results into the details object so we can access them in our template
       lookupObject.data.details = lookupObject.data.details || {};
       lookupObject.data.details.passivedns = passivedns;
