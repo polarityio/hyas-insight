@@ -2,31 +2,31 @@
   {{#each details.result as |result index|}}
     {{#if (lt index 3)}}
       {{#if result.datetime}}
-        <span class="integration-summary-tag integration-background-color integration-border-color">
+        <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
           <span class="integration-text-color">Date Last Seen: {{result.datetime}}</span>
         </span>
       {{/if}}
       {{#if result.device_user_agent}}
-        <span class="integration-summary-tag integration-background-color integration-border-color">
+        <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
           <span class="integration-text-color">Device User Agent: {{result.device_user_agent}}</span>
         </span>
       {{/if}}
       {{#if result.registrar}}
-      <span class="integration-summary-tag integration-background-color integration-border-color">
+      <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
           <span class="integration-text-color">Registrar: {{result.registrar}}</span>
         </span>
       {{/if}}
       {{#if result.domain_created_datetime}}
-      <span class="integration-summary-tag integration-background-color integration-border-color">
+      <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
           <span class="integration-text-color">Domain Created: {{result.domain_created_datetime}}</span>
         </span>
       {{/if}}
       {{#if result.domain_updated_datetime}}
-      <span class="integration-summary-tag integration-background-color integration-border-color">
+      <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
           <span class="integration-text-color">Domain Last Updated: {{result.domain_updated_datetime}}</span>
         </span>
@@ -35,13 +35,13 @@
   {{/each}}
 {{/if}}
 {{#if details.result.avscan_score}}
-  <span class="integration-summary-tag integration-background-color integration-border-color">
+  <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
     <span class="integration-text-color">AV_Scan Score: {{details.result.avscan_score}}</span>
   </span>
 {{/if}}
 {{#if details.result.scan_time}}
-  <span class="integration-summary-tag integration-background-color integration-border-color">
+  <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
     <span class="integration-text-color"> Scan Time: {{details.result.scan_time}}</span>
   </span>
