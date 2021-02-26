@@ -17,11 +17,11 @@ This is an alternate option that can be used to specify domains or IPs that you 
 
 ### Domain Blocklist Regex
 
-This option allows you to specify a regex to blocklist domains.  Any domain matching the regex will not be looked up.  If the regex is left blank then no domains will be blacklisted.
+This option allows you to specify a regex to blocklist domains.  Any domain matching the regex will not be looked up.  If the regex is left blank then no domains will be blocklisted.
 
 ### IP Blocklist Regex
 
-This option allows you to specify a regex to blocklist IPv4 Addresses.  Any IPv4 matching the regex will not be looked up.  If the regex is left blank then no IPv4s will be blacklisted.
+This option allows you to specify a regex to blocklist IPv4 Addresses.  Any IPv4 matching the regex will not be looked up.  If the regex is left blank then no IPv4s will be blocklisted.
 
 
 ## Installation Instructions
