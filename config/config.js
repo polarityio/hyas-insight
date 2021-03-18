@@ -25,6 +25,7 @@ module.exports = {
     description:
       "Searches Hyas Insight for information on hashes, ips and domains",
     entityTypes: ['IPv4', 'IPv6', 'MD5', 'domain', 'email'],
+    defaultColor: "light-pink",
     /**
      * Provide custom component logic and template for rendering the integration details block.  If you do not
      * provide a custom template and/or component then the integration will display data as a table of key value
@@ -91,7 +92,7 @@ module.exports = {
         adminOnly: false
       },
       {
-        key: 'blacklist',
+        key: 'blocklist',
         name: 'Block list Domains and IPs',
         description: 'List of domains and IPs that you never want to send to Hyas',
         default: '',
@@ -100,19 +101,19 @@ module.exports = {
         adminOnly: false
       },
       {
-        key: 'domainBlacklistRegex',
+        key: 'domainBlocklistRegex',
         name: 'Domain Block List Regex',
         description:
-          'Domains that match the given regex will not be looked up (if blank, no domains will be black listed)',
+          'Domains that match the given regex will not be looked up (if blank, no domains will be block listed)',
         default: '',
         type: 'text',
         userCanEdit: false,
         adminOnly: false
       },
       {
-        key: 'ipBlacklistRegex',
+        key: 'ipBlocklistRegex',
         name: 'IP Block List Regex',
-        description: 'IPs that match the given regex will not be looked up (if blank, no IPs will be black listed)',
+        description: 'IPs that match the given regex will not be looked up (if blank, no IPs will be block listed)',
         default: '',
         type: 'text',
         userCanEdit: false,
