@@ -3,10 +3,13 @@
 const request = require('request');
 const _ = require('lodash');
 const fp = require('lodash/fp');
-const moment = require('moment');
 const config = require('./config/config');
 const async = require('async');
 const fs = require('fs');
+const PNF = require('google-libphonenumber').PhoneNumberFormat;
+
+// Get an instance of `PhoneNumberUtil`.
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
 let Logger;
 let requestWithDefaults;
@@ -21,7 +24,7 @@ const MAX_PARALLEL_LOOKUPS = 10;
 const PAGE_SIZE = 5;
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
 const url = 'https://insight.hyas.com/api/ext';
-const uiurl = 'https://insight.hyas.com';
+const uiurl = 'https://apps.hyas.com';
 /**
  *
  * @param entities
@@ -32,10 +35,7 @@ function startup(logger) {
   Logger = logger;
   let defaults = {};
 
-  if (
-    typeof config.request.cert === 'string' &&
-    config.request.cert.length > 0
-  ) {
+  if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
     defaults.cert = fs.readFileSync(config.request.cert);
   }
 
@@ -54,10 +54,7 @@ function startup(logger) {
     defaults.ca = fs.readFileSync(config.request.ca);
   }
 
-  if (
-    typeof config.request.proxy === 'string' &&
-    config.request.proxy.length > 0
-  ) {
+  if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
     defaults.proxy = config.request.proxy;
   }
 
@@ -83,7 +80,7 @@ function doLookup(entities, options, cb) {
         //do the lookup
         let requestOptions = {
           json: true,
-          uri: url + '/device_geo',
+          uri: url + '/passivedns',
           method: 'POST',
           headers: {
             'X-API-Key': options.apiKey,
@@ -121,7 +118,7 @@ function doLookup(entities, options, cb) {
         //do the lookup
         let requestOptions = {
           json: true,
-          uri: url + '/device_geo',
+          uri: url + '/passivedns',
           method: 'POST',
           headers: {
             'X-API-Key': options.apiKey,
@@ -189,9 +186,13 @@ function doLookup(entities, options, cb) {
           });
         });
       }
-    }else if (entity.type === 'custom') {
+    } else if (entity.type === 'custom') {
       if (!_isInvalidEntity(entity) && !_isEntityBlocklisted(entity, options)) {
         //do the lookup
+        const phone = phoneUtil.format(
+          phoneUtil.parseAndKeepRawInput(entity.value, 'US'),
+          PNF.E164
+        );
         let requestOptions = {
           uri: url + '/whois',
           method: 'POST',
@@ -200,9 +201,7 @@ function doLookup(entities, options, cb) {
             'Content-Type': 'application/json'
           },
           body: {
-            applied_filters: {
-              phone: entity.value
-            }
+            applied_filters: { phone }
           },
           json: true
         };
@@ -220,7 +219,7 @@ function doLookup(entities, options, cb) {
 
             done(null, {
               ...processedResult,
-              link: `${uiurl}/static/details?phone=${entity.value}`
+              link: `${uiurl}/static/details?phone=${phone}`
             });
           });
         });
@@ -291,11 +290,7 @@ function doLookup(entities, options, cb) {
           done(null, {
             ...processedResult,
             link: `${uiurl}/static/details?${
-              entity.isMD5
-                ? 'md5'
-                : entity.isSHA256
-                ? 'sha256'
-                : 'q'
+              entity.isMD5 ? 'md5' : entity.isSHA256 ? 'sha256' : 'q'
             }=${entity.value}`
           });
         });
@@ -311,19 +306,13 @@ function doLookup(entities, options, cb) {
     }
 
     results.forEach((result) => {
-      if (
-        result.body === null ||
-        _isMiss(result.body) ||
-        _.isEmpty(result.body)
-      ) {
+      if (result.body === null || _isMiss(result.body) || _.isEmpty(result.body)) {
         lookupResults.push({
           entity: result.entity,
           data: null
         });
       } else {
-        const resultWithFormatedPhoneNumber = getResultWithFormatedPhoneNumber(
-          result
-        );
+        const resultWithFormatedPhoneNumber = getResultWithFormatedPhoneNumber(result);
 
         lookupResults.push({
           entity: result.entity,
@@ -333,8 +322,8 @@ function doLookup(entities, options, cb) {
               result: resultWithFormatedPhoneNumber,
               link: result.link,
               pageSize: PAGE_SIZE
-            },
-          },
+            }
+          }
         });
       }
     });
@@ -344,7 +333,7 @@ function doLookup(entities, options, cb) {
 }
 
 const getResultWithFormatedPhoneNumber = fp.flow(
-  fp.getOr([], "body"),
+  fp.getOr([], 'body'),
   fp.map((detail) => ({
     ...detail,
     ...(detail.phone &&
@@ -352,11 +341,11 @@ const getResultWithFormatedPhoneNumber = fp.flow(
         phone: fp.map(
           ({ phone }) => ({
             link: `${uiurl}/static/details?phone=%2B${phone.slice(1)}`,
-            number: phone,
+            number: phone
           }),
           detail.phone
-        ),
-      }),
+        )
+      })
   }))
 );
 
@@ -398,11 +387,11 @@ function _setupRegexBlocklists(options) {
   }
 }
 
-function doPassivednsLookup(entity, options) {
+function doDeviceGeoIpLookup(entity, options) {
   return function (done) {
     if (entity.isIPv4) {
       let requestOptions = {
-        uri: url + '/passivedns',
+        uri: url + '/device_geo',
         method: 'POST',
         headers: {
           'X-API-Key': options.apiKey,
@@ -413,7 +402,7 @@ function doPassivednsLookup(entity, options) {
             ipv4: entity.value
           }
         },
-        json: true,
+        json: true
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
@@ -441,7 +430,8 @@ function doDomainPassiveLookup(entity, options) {
         body: {
           applied_filters: {
             domain: entity.value
-          }
+          },
+          paging: { order: 'desc', sort: 'datetime', page_number: 0, page_size: 10 }
         },
         json: true
       };
@@ -577,39 +567,78 @@ function doDynamicDNSLookup(entity, options) {
     }
   };
 }
+function doDeviceGeoLookup(entity, options) {
+  return function (done) {
+    if (entity.type === 'custom') {
+      let requestOptions = {
+        json: true,
+        uri: url + '/device_geo',
+        method: 'POST',
+        headers: {
+          'X-API-Key': options.apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          applied_filters: {
+            phone: phoneUtil.format(
+              phoneUtil.parseAndKeepRawInput(entity.value, 'US'),
+              PNF.E164
+            )
+          }
+        }
+      };
+
+      Logger.trace({ options: requestOptions }, 'Request URI');
+
+      requestWithDefaults(requestOptions, (error, response, body) => {
+        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        let processedResult = handleRestError(error, entity, response, body);
+        if (processedResult.error) return done(processedResult);
+
+        Logger.trace({ test: 8798789789, processedResult });
+        done(null, processedResult.body);
+      });
+    } else {
+      done(null, null);
+    }
+  };
+}
 
 function onDetails(lookupObject, options, cb) {
   async.parallel(
     {
-      passivedns: doPassivednsLookup(lookupObject.entity, options),
       domainSsl: doDomainSSlLookup(lookupObject.entity, options),
       domainPassive: doDomainPassiveLookup(lookupObject.entity, options),
       ipDynamic: doDynamicDNSLookup(lookupObject.entity, options),
       ipSample: doIpSampleLookup(lookupObject.entity, options),
-      domainSample: doDomainSampleLookup(lookupObject.entity, options)
+      domainSample: doDomainSampleLookup(lookupObject.entity, options),
+      deviceGeo: doDeviceGeoLookup(lookupObject.entity, options),
+      deviceGeoIp: doDeviceGeoIpLookup(lookupObject.entity, options)
     },
     (err, results) => {
       if (err) {
-        Logger.error(err, "Error in On Details")
+        Logger.error(err, 'Error in On Details');
         return cb(err);
       }
       const {
-        passivedns,
         domainSsl,
         domainPassive,
         ipDynamic,
         ipSample,
-        domainSample
+        domainSample,
+        deviceGeo,
+        deviceGeoIp
       } = results;
-      
+
       //store the results into the details object so we can access them in our template
       lookupObject.data.details = lookupObject.data.details || {};
-      lookupObject.data.details.passivedns = passivedns;
       lookupObject.data.details.domainSsl = domainSsl;
       lookupObject.data.details.domainPassive = domainPassive;
       lookupObject.data.details.ipDynamic = ipDynamic;
       lookupObject.data.details.ipSample = ipSample;
       lookupObject.data.details.domainSample = domainSample;
+      lookupObject.data.details.deviceGeo = deviceGeo;
+      lookupObject.data.details.deviceGeoIp = deviceGeoIp;
 
       Logger.trace(
         { lookup: lookupObject.data },
@@ -685,10 +714,7 @@ function _isInvalidEntity(entity) {
 function _isEntityBlocklisted(entity, options) {
   const blocklist = options.blocklist;
 
-  Logger.trace(
-    { blocklist: blocklist },
-    'checking to see what blocklist looks like'
-  );
+  Logger.trace({ blocklist: blocklist }, 'checking to see what blocklist looks like');
 
   if (_.includes(blocklist, entity.value.toLowerCase())) {
     return true;
@@ -706,10 +732,7 @@ function _isEntityBlocklisted(entity, options) {
   if (entity.isDomain) {
     if (domainBlocklistRegex !== null) {
       if (domainBlocklistRegex.test(entity.value)) {
-        Logger.debug(
-          { domain: entity.value },
-          'Blocked BlockListed Domain Lookup'
-        );
+        Logger.debug({ domain: entity.value }, 'Blocked BlockListed Domain Lookup');
         return true;
       }
     }
@@ -733,7 +756,7 @@ function validateOptions(userOptions, cb) {
   ) {
     errors.push({
       key: 'apiKey',
-      message: 'You must provide a PassiveTotal API key',
+      message: 'You must provide a PassiveTotal API key'
     });
   }
   cb(null, errors);

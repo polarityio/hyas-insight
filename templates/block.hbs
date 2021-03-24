@@ -16,18 +16,18 @@
 <ul class="nav nav-tabs">
     {{#if (eq block.entity.type "IPv4")}}
         <li class="nav-item">
+            <a {{action "changeTab" "passivednsip"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "passivednsip")(not activeTab)) "active"}}" href="#">
+                Passive DNS
+            </a>
+        </li>
+        <li class="nav-item">
             <a {{action "changeTab" "deviceGeo"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "deviceGeo")(not activeTab)) "active"}}" href="#">
-                Device Geo
+                Device Geo {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
         <li class="nav-item">
             <a {{action "changeTab" "ipdynamic"}} class="nav-link {{if (or (eq activeTab "ipdynamic")(not activeTab)) "active"}}" href="#">
                 Dynamic DNS {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a {{action "changeTab" "passivednsip"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "passivednsip")(not activeTab)) "active"}}" href="#">
-                Passive DNS {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
         <li class="nav-item">
@@ -41,8 +41,6 @@
             <a {{action "changeTab" "deviceGeov6"}} class="nav-link {{if (eq activeTab "deviceGeov6") "active"}}" href="#">Device Geo</a>
         </li>
     {{/if}}
-
-
     {{#if (eq block.entity.type "md5")}}
         <li class="nav-item">
             <a {{action "changeTab" "sample"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "sample")(not activeTab)) "active"}}" href="#">
@@ -76,6 +74,18 @@
         <li class="nav-item">
             <a {{action "changeTab" "whoisemail"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whoisemail")(not activeTab)) "active"}}" href="#">
                 WhoIs {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
+            </a>
+        </li>
+    {{/if}}
+    {{#if (eq block.entity.subtype "custom.phone")}}
+        <li class="nav-item">
+            <a {{action "changeTab" "whoisemail"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whoisemail")(not activeTab)) "active"}}" href="#">
+                WhoIs
+            </a>
+        </li>
+        <li class="nav-item">
+            <a {{action "changeTab" "deviceGeoPhone"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "deviceGeoPhone")(not activeTab)) "active"}}" href="#">
+                Device Geo {{#if block.isLoadingDetails}}{{fa-icon "spinner-third" fixedWidth=true spin=true class="loading-icon"}}{{/if}}
             </a>
         </li>
     {{/if}}
@@ -166,74 +176,147 @@
 {{/if}}
 
 {{#if (eq activeTab "passivednsip")}}
+    {{#if details.result.length}}
+        <h1 class="p-title">
+            {{fa-icon "globe" fixedWidth=true}} Passive DNS Details
+        </h1>
+        {{#each details.result as | result |}}
+            <div class="mb-2">
+                {{#if result.cert_name}}
+                    <div>
+                        <span class="p-key">Cert Name: </span>
+                        <span class="p-value">{{result.cert_name}}</span>
+                    </div>
+                {{/if}}
+                {{#if result.domain}}
+                    <div>
+                        <span class="p-key">Domain: </span>
+                        <span class="p-value">{{result.domain}}</span>
+                    </div>
+                {{/if}}
+                {{#if result.first_seen}}
+                    <div>
+                        <span class="p-key">First Seen: </span>
+                        <span class="p-value">{{result.first_seen}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.last_seen}}
+                    <div>
+                        <span class="p-key">Last Seen: </span>
+                        <span class="p-value">{{result.last_seen}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.country_name}}
+                    <div>
+                        <span class="p-key">Country Name: </span>
+                        <span class="p-value">{{result.ip.geo.country_name}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.geo.city_name}}
+                    <div>
+                        <span class="p-key">City Name: </span>
+                        <span class="p-value">{{result.ip.geo.city_name}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.isp.autonomous_system_organization}}
+                    <div>
+                        <span class="p-key">City Name: </span>
+                        <span class="p-value">{{result.ip.isp.autonomous_system_Organization}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.isp.isp}}
+                    <div>
+                        <span class="p-key">ISP: </span>
+                        <span class="p-value">{{result.ip.isp.isp}} </span>
+                    </div>
+                {{/if}}
+                {{#if result.ip.isp.organization}}
+                    <div>
+                        <span class="p-key">ISP Oganization: </span>
+                        <span class="p-value">{{result.ip.isp.organization}} </span>
+                    </div>
+                {{/if}}
+            </div>
+        {{/each}}
+        {{#if (and (eq details.pageSize details.result.length) details.link)}}
+            <div class="p-title">
+                <a class="p-link" href={{details.link}}>
+                    ... Find more in Hyas
+                    {{fa-icon "external-link-square" class="external-link-icon"}}
+                </a>
+            </div>
+        {{/if}}
+    {{else}}
+        <div class="alert alert-info mt-2" role="alert">
+            No PassiveDns Information Found
+        </div>
+    {{/if}}
+{{/if}}
+
+{{#if (eq activeTab "deviceGeo")}}
     {{#if block.isLoadingDetails}}
         <div class="alert alert-info" role="alert">
-            Passive DNS Details are Loading
+            Device Geo Details are Loading
         </div>
     {{else}}
-        {{#if details.passivedns.length}}
+        {{#if details.deviceGeoIp.length}}
             <h1 class="p-title">
-                {{fa-icon "globe" fixedWidth=true}} Passive DNS Details
+                {{fa-icon "globe" fixedWidth=true}}  Device Geo Details
             </h1>
-            {{#each details.passivedns as | result |}}
+            {{#each details.deviceGeoIp as | device |}}
                 <div class="mb-2">
-                    {{#if result.cert_name}}
+                    {{#if device.datetime}}
                         <div>
-                            <span class="p-key">Cert Name: </span>
-                            <span class="p-value">{{result.cert_name}}</span>
+                            <span class="p-key">Date Seen: </span>
+                            <span class="p-value">{{device.datetime}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.domain}}
+                    {{#if device.device_primary_id}}
                         <div>
-                            <span class="p-key">Domain: </span>
-                            <span class="p-value">{{result.domain}}</span>
+                            <span class="p-key">Device ID: </span>
+                            <span class="p-value">{{device.device_primary_id}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.first_seen}}
+                    {{#if device.device_user_agent}}
                         <div>
-                            <span class="p-key">First Seen: </span>
-                            <span class="p-value">{{result.first_seen}} </span>
+                            <span class="p-key">Device User Agent: </span>
+                            <span class="p-value">{{device.device_user_agent}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.last_seen}}
+                    {{#if device.geo_country_alpha_2}}
                         <div>
-                            <span class="p-key">Last Seen: </span>
-                            <span class="p-value">{{result.last_seen}} </span>
+                            <span class="p-key">Device Country Code: </span>
+                            <span class="p-value">{{device.geo_country_alpha_2}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.ip.geo.country_name}}
+                    {{#if device.geo_horizontal_accuracy}}
                         <div>
-                            <span class="p-key">Country Name: </span>
-                            <span class="p-value">{{result.ip.geo.country_name}} </span>
+                            <span class="p-key">Device Horizontal Accuracy: </span>
+                            <span class="p-value">{{device.geo_horizontal_accuracy}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.ip.geo.city_name}}
+                    {{#if device.latitude}}
                         <div>
-                            <span class="p-key">City Name: </span>
-                            <span class="p-value">{{result.ip.geo.city_name}} </span>
+                            <span class="p-key">Device Latitude: </span>
+                            <span class="p-value">{{device.latitude}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.ip.geo.isp.autonomous_system_organization}}
+                    {{#if device.longitude}}
                         <div>
-                            <span class="p-key">City Name: </span>
-                            <span class="p-value">{{result.ip.geo.isp.autonomous_system_Organization}} </span>
+                            <span class="p-key">Device Longitude: </span>
+                            <span class="p-value">{{device.longitude}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.ip.geo.isp.isp}}
+                    {{#if device.wifi_ssid}}
                         <div>
-                            <span class="p-key">ISP: </span>
-                            <span class="p-value">{{result.ip.geo.isp.isp}} </span>
+                            <span class="p-key">Wifi SSID: </span>
+                            <span class="p-value">{{device.wifi_ssid}}</span>
                         </div>
                     {{/if}}
-                    {{#if result.ip.geo.isp.organization}}
-                        <div>
-                            <span class="p-key">ISP Oganization: </span>
-                            <span class="p-value">{{result.ip.geo.isp.organization}} </span>
-                        </div>
-                    {{/if}}
+                    
                 </div>
             {{/each}}
-            {{#if (and (eq details.pageSize details.passivedns.length) details.link)}}
+            {{#if (and (eq details.pageSize details.deviceGeoIp.length) details.link)}}
                 <div class="p-title">
                     <a class="p-link" href={{details.link}}>
                         ... Find more in Hyas
@@ -243,18 +326,18 @@
             {{/if}}
         {{else}}
             <div class="alert alert-info mt-2" role="alert">
-                No PassiveDns Information Found
+                No Device Geo Details Found
             </div>
         {{/if}}
     {{/if}}
 {{/if}}
 
-{{#if (eq activeTab "deviceGeo")}}
-    {{#if details.result.length}}
+{{#if (eq activeTab "deviceGeoPhone")}}
+    {{#if details.deviceGeo.length}}
         <h1 class="p-title">
             {{fa-icon "globe" fixedWidth=true}}  Device Geo Details
         </h1>
-        {{#each details.result as | device |}}
+        {{#each details.deviceGeo as | device |}}
             <div class="mb-2">
                 {{#if device.datetime}}
                     <div>
@@ -262,16 +345,22 @@
                         <span class="p-value">{{device.datetime}}</span>
                     </div>
                 {{/if}}
-                {{#if device.device_primary_id}}
+                {{#if device.device_geo_id}}
                     <div>
                         <span class="p-key">Device ID: </span>
-                        <span class="p-value">{{device.device_primary_id}}</span>
+                        <span class="p-value">{{device.device_geo_id}}</span>
                     </div>
                 {{/if}}
-                {{#if device.device_user_agent}}
+                {{#if device.ipv4}}
                     <div>
-                        <span class="p-key">Device User Agent: </span>
-                        <span class="p-value">{{device.device_user_agent}}</span>
+                        <span class="p-key">IPv4: </span>
+                        <span class="p-value">{{device.ipv4}}</span>
+                    </div>
+                {{/if}}
+                {{#if device.ipv6}}
+                    <div>
+                        <span class="p-key">IPv6: </span>
+                        <span class="p-value">{{device.ipv6}}</span>
                     </div>
                 {{/if}}
                 {{#if device.geo_country_alpha_2}}
@@ -307,7 +396,7 @@
                 
             </div>
         {{/each}}
-        {{#if (and (eq details.pageSize details.result.length) details.link)}}
+        {{#if (and (eq details.pageSize details.deviceGeo.length) details.link)}}
             <div class="p-title">
                 <a class="p-link" href={{details.link}}>
                     ... Find more in Hyas
@@ -578,7 +667,6 @@
                         </div>
                     {{/each}}
                 {{/if}}
-
                 {{#if who.phone}}
                     {{#each who.phone as | phone |}}
                         <div>
@@ -623,7 +711,7 @@
         <h1 class="p-title">
             {{fa-icon "question-circle" fixedWidth=true}} Whois Information Details
         </h1>
-            <div class="mb-2">
+        <div class="mb-2">
             {{#each details.result as | who |}}
                 {{#if who.country}}
                     {{#each who.country as | country |}}

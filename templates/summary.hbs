@@ -1,6 +1,6 @@
 {{#if details.result.length}}
   {{#each details.result as |result index|}}
-    {{#if (lt index 3)}}
+    {{#if (lt index 1)}}
       {{#if result.datetime}}
         <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
           <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
@@ -45,4 +45,101 @@
     <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
     <span class="integration-text-color"> Scan Time: {{details.result.scan_time}}</span>
   </span>
+{{/if}}
+
+
+{{#if (eq block.entity.type "IPv4")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Passive DNS ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.deviceGeoIp.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Device Geo ({{details.deviceGeoIp.length}}{{if (eq details.deviceGeoIp.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.ipDynamic.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Dynamic DNS ({{details.ipDynamic.length}}{{if (eq details.ipDynamic.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.ipSample.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Associated Hashes ({{details.ipSample.length}}{{if (eq details.ipSample.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+{{/if}}
+
+{{#if (eq block.entity.type "IPv6")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Device Geo ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+{{/if}}
+
+{{#if (eq block.entity.type "md5")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Sample ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+{{/if}}
+
+{{#if (eq block.entity.type "domain")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> WhoIs ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.domainPassive.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Passive DNS ({{details.domainPassive.length}}{{if (eq details.domainPassive.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.domainSsl.ssl_certs.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> SSL Certificate ({{details.domainSsl.ssl_certs.length}}{{if (eq details.domainSsl.ssl_certs.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.domainSample.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Associated Hash Information ({{details.domainSample.length}}{{if (eq details.domainSample.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+{{/if}}
+
+{{#if (eq block.entity.type "email")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> WhoIs ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+{{/if}}
+
+{{#if (eq block.entity.subtype "custom.phone")}}
+  {{#if details.result.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> WhoIs ({{details.result.length}}{{if (eq details.result.length 5) "+"}})</span>
+    </span>
+  {{/if}}
+  {{#if details.deviceGeo.length}}
+    <span {{on "click" (optional this.scrollToIntegration)}} class="integration-summary-tag integration-background-color integration-border-color">
+      <span class="acronym integration-text-bold-color">{{block.acronym}}</span>
+      <span class="integration-text-color"> Device Geo ({{details.deviceGeo.length}}{{if (eq details.deviceGeo.length 5) "+"}})</span>
+    </span>
+  {{/if}}
 {{/if}}
