@@ -6,10 +6,11 @@ polarity.export = PolarityComponent.extend({
   errorMsg: '',
   initialActiveTabMap: {
     IPv4: 'passivednsip',
-    IPv6: 'deviceGeov6',
+    IPv6: 'passivednsip',
     md5: 'sample',
     domain: 'passivedns',
-    email: 'whoisemail'
+    email: 'whoisemail',
+    custom: 'whoisemail'
   },
   init() {
     this.set('activeTab', this.get('initialActiveTabMap')[this.get('entityType')]);

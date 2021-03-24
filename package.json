@@ -1,10 +1,11 @@
 {
   "main": "./integration.js",
   "name": "hyas-insight",
-  "version": "3.1.4-beta",
+  "version": "3.1.5-beta",
   "private": true,
   "dependencies": {
-    "request": "^2.88.2",
-    "async": "^3.2.0"
+    "async": "^3.2.0",
+    "google-libphonenumber": "^3.2.18",
+    "request": "^2.88.2"
   }
 }
