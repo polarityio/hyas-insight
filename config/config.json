@@ -1,0 +1,88 @@
+{
+  "name": "HYAS Insight",
+  "acronym": "HYAS",
+  "description": "Searches Hyas Insight for information on hashes, ips and domains",
+  "entityTypes": [
+    "IPv4",
+    "IPv6",
+    "MD5",
+    "domain",
+    "email"
+  ],
+  "customTypes": [
+    {
+      "key": "phone",
+      "regex": "(((\\+\\d{1,2}|1)[\\s.-]?)?\\(?\\d{3}[)-.\\W]\\s?\\d{3}[-.\\W]\\d{4}?)|(\\d{7,14})"
+    }
+  ],
+  "defaultColor": "light-pink",
+  "styles": [
+    "./styles/hyas.less"
+  ],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "summary": {
+    "component": {
+      "file": "./components/summary.js"
+    },
+    "template": {
+      "file": "./templates/summary.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": "",
+    "rejectUnauthorized": true
+  },
+  "logging": {
+    "level": "info"
+  },
+  "onDemandOnly": true,
+  "options": [
+    {
+      "key": "apiKey",
+      "name": "API Key",
+      "description": "HYAS Api Key",
+      "default": "",
+      "type": "password",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "blocklist",
+      "name": "Block list Domains and IPs",
+      "description": "List of domains and IPs that you never want to send to Hyas",
+      "default": "",
+      "type": "text",
+      "userCanEdit": false,
+      "adminOnly": false
+    },
+    {
+      "key": "domainBlocklistRegex",
+      "name": "Domain Block List Regex",
+      "description": "Domains that match the given regex will not be looked up (if blank, no domains will be block listed)",
+      "default": "",
+      "type": "text",
+      "userCanEdit": false,
+      "adminOnly": false
+    },
+    {
+      "key": "ipBlocklistRegex",
+      "name": "IP Block List Regex",
+      "description": "IPs that match the given regex will not be looked up (if blank, no IPs will be block listed)",
+      "default": "",
+      "type": "text",
+      "userCanEdit": false,
+      "adminOnly": false
+    }
+  ]
+}
