@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "dd9a53a0-cce1-11ed-aeee-075d3490155d",
   "name": "HYAS Insight",
   "acronym": "HYAS",
   "description": "Searches Hyas Insight for information on hashes, ips and domains",
