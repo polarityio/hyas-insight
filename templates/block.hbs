@@ -77,7 +77,7 @@
             </a>
         </li>
     {{/if}}
-    {{#if (eq block.entity.subtype "custom.phone")}}
+    {{#if isPhoneEntity}}
         <li class="nav-item">
             <a {{action "changeTab" "whoisemail"}} class="nav-link {{if block.isLoadingDetails "disabled"}} {{if (or (eq activeTab "whoisemail")(not activeTab)) "active"}}" href="#">
                 WhoIs

@@ -1,11 +1,11 @@
 {
   "name": "hyas-insight",
-  "version": "3.1.9",
+  "version": "3.1.10",
   "main": "./integration.js",
   "private": true,
   "dependencies": {
     "async": "^3.2.4",
     "google-libphonenumber": "^3.2.18",
-    "postman-request": "^2.88.1-postman.31"
+    "postman-request": "^2.88.1-postman.33"
   }
 }
