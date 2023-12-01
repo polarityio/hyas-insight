@@ -1,11 +1,6 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
-  isPhoneEntity: false,
-  init() {
-    if (this.get('block.entity.type') === 'custom') {
-      if (this.get('block.entity.types').includes('custom.phone'))
-        this.set('isPhoneEntity', true);
-    }
-    this._super(...arguments);
-  }
+  isPhoneEntity: Ember.computed.alias('block.entity.types.[]', function () {
+    return this.get('block.entity.types').includes('custom.phone');
+  })
 });

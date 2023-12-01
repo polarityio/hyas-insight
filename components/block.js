@@ -2,6 +2,9 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
   entityType: Ember.computed.alias('block.entity.type'),
+  isPhoneEntity: Ember.computed.alias('block.entity.types.[]', function () {
+    return this.get('block.entity.types').includes('custom.phone');
+  }),
   activeTab: '',
   errorMsg: '',
   initialActiveTabMap: {
@@ -12,12 +15,7 @@ polarity.export = PolarityComponent.extend({
     email: 'whoisemail',
     custom: 'whoisemail'
   },
-  isPhoneEntity: false,
   init() {
-    if (this.get('block.entity.type') === 'custom') {
-      if (this.get('block.entity.types').includes('custom.phone'))
-        this.set('isPhoneEntity', true);
-    }
     this.set('activeTab', this.get('initialActiveTabMap')[this.get('entityType')]);
     this._super(...arguments);
   },
