@@ -680,7 +680,7 @@ function handleRestError(error, entity, res, body) {
       body: null
     };
   } else if (res.statusCode === 401) {
-    // no result found
+    // Unauthorized
     result = {
       error: `Invalid or Expired API Key (Status: ${res.statusCode})`,
       detail: `Invalid or Expired API Key (Status: ${res.statusCode})`
