@@ -25,6 +25,7 @@ const PAGE_SIZE = 5;
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
 const url = 'https://insight.hyas.com/api/ext';
 const uiurl = 'https://apps.hyas.com';
+
 /**
  *
  * @param entities
@@ -567,6 +568,7 @@ function doDynamicDNSLookup(entity, options) {
     }
   };
 }
+
 function doDeviceGeoLookup(entity, options) {
   return function (done) {
     if (entity.type === 'custom') {
@@ -677,11 +679,18 @@ function handleRestError(error, entity, res, body) {
       entity: entity,
       body: null
     };
+  } else if (res.statusCode === 401) {
+    // Unauthorized
+    result = {
+      error: `Invalid or Expired API Key (Status: ${res.statusCode})`,
+      detail: `Invalid or Expired API Key (Status: ${res.statusCode})`
+    };
   } else {
     // unexpected status code
     result = {
-      error: body,
-      detail: `${body.error}: ${body.message}`
+      error: body ? body : `Unexpected HTTP Status Code ${res.statusCode}`,
+      statusCode: res.statusCode,
+      detail: `Unexpected HTTP Status Code ${res.statusCode}`
     };
   }
   return result;
