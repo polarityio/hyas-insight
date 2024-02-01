@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "async": "^3.2.5",
-    "google-libphonenumber": "^3.2.33",
+    "google-libphonenumber": "^3.2.34",
     "postman-request": "^2.88.1-postman.33"
   }
 }
