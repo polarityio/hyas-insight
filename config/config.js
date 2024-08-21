@@ -95,6 +95,15 @@ module.exports = {
       adminOnly: false
     },
     {
+      "key": "maxResults",
+      "name": "Maximum Results",
+      "description": "Maximum number of results to return.",
+      "default": 5,
+      "type": "number",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
       key: 'blocklist',
       name: 'Block list Domains and IPs',
       description: 'List of domains and IPs that you never want to send to Hyas',
