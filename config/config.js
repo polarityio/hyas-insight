@@ -91,8 +91,17 @@ module.exports = {
       description: 'HYAS Api Key',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      "key": "maxResults",
+      "name": "Maximum Results",
+      "description": "Maximum number of results to return.",
+      "default": 5,
+      "type": "number",
+      "userCanEdit": false,
+      "adminOnly": false
     },
     {
       key: 'blocklist',

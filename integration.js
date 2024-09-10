@@ -21,7 +21,6 @@ let ipBlocklistRegex = null;
 const MAX_DOMAIN_LABEL_LENGTH = 63;
 const MAX_ENTITY_LENGTH = 100;
 const MAX_PARALLEL_LOOKUPS = 10;
-const PAGE_SIZE = 5;
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
 const url = 'https://insight.hyas.com/api/ext';
 const uiurl = 'https://apps.hyas.com';
@@ -98,7 +97,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+            body = body && _.isArray(body) && body.splice(0, options.maxResults);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -136,7 +135,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+            body = body && _.isArray(body) && body.splice(0, options.maxResults);
             let processedResult = handleRestError(error, entity, res, body);
 
             if (processedResult.error) {
@@ -173,7 +172,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+            body = body && _.isArray(body) && body.splice(0, options.maxResults);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -211,7 +210,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+            body = body && _.isArray(body) && body.splice(0, options.maxResults);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -247,7 +246,7 @@ function doLookup(entities, options, cb) {
 
         tasks.push(function (done) {
           requestWithDefaults(requestOptions, function (error, res, body) {
-            body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+            body = body && _.isArray(body) && body.splice(0, options.maxResults);
             let processedResult = handleRestError(error, entity, res, body);
             if (processedResult.error) {
               done(processedResult);
@@ -322,7 +321,7 @@ function doLookup(entities, options, cb) {
             details: {
               result: resultWithFormatedPhoneNumber,
               link: result.link,
-              pageSize: PAGE_SIZE
+              pageSize: options.maxResults
             }
           }
         });
@@ -407,7 +406,7 @@ function doDeviceGeoIpLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -432,13 +431,13 @@ function doDomainPassiveLookup(entity, options) {
           applied_filters: {
             domain: entity.value
           },
-          paging: { order: 'desc', sort: 'datetime', page_number: 0, page_size: 10 }
+          paging: { order: 'desc', sort: 'datetime', page_number: 0, page_size: options.maxResults }
         },
         json: true
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -468,7 +467,7 @@ function doIpSampleLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -498,7 +497,7 @@ function doDomainSampleLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -528,7 +527,7 @@ function doDomainSSlLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -558,7 +557,7 @@ function doDynamicDNSLookup(entity, options) {
       };
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
         done(null, processedResult.body);
@@ -593,7 +592,7 @@ function doDeviceGeoLookup(entity, options) {
       Logger.trace({ options: requestOptions }, 'Request URI');
 
       requestWithDefaults(requestOptions, (error, response, body) => {
-        body = body && _.isArray(body) && body.splice(0, PAGE_SIZE);
+        body = body && _.isArray(body) && body.splice(0, options.maxResults);
         let processedResult = handleRestError(error, entity, response, body);
         if (processedResult.error) return done(processedResult);
 
